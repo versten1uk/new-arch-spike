@@ -1,0 +1,19 @@
+{
+  "name": "cg-webview",
+  "version": "1.0.0",
+  "description": "Custom WebView wrapper for CarGurus",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": ["react-native", "expo", "webview"],
+  "author": "CarGurus",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-webview": "*"
+  },
+  "dependencies": {
+    "expo-modules-core": "*"
+  }
+}
+

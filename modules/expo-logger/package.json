@@ -1,0 +1,16 @@
+{
+  "name": "expo-logger",
+  "version": "1.0.0",
+  "description": "Expo Module for logging utility",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": ["react-native", "expo-module"],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "expo-modules-core": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}
+

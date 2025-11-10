@@ -1,9 +1,16 @@
+# Resolve expo autolinking FIRST
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+
 # Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+def node_require(script)
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
+
+node_require('react-native/scripts/react_native_pods.rb')
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
@@ -15,15 +22,47 @@ if linkage != nil
 end
 
 target 'NewArchSpike' do
-  config = use_native_modules!
+  # CRITICAL: Configure expo-modules-autolinking to discover local modules
+  config_command = [
+    'node',
+    '--no-warnings',
+    '--eval',
+    'require(require.resolve(\'expo-modules-autolinking\', { paths: [require.resolve(\'expo/package.json\')] }))(process.argv.slice(1))',
+    'react-native-config',
+    '--json',
+    '--platform',
+    'ios'
+  ]
+
+  config = use_native_modules!(config_command)
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    :hermes_enabled => true
   )
 
+  # Expo Modules - will auto-discover ALL local modules (including our custom ones!)
+  use_expo_modules!
+
   post_install do |installer|
+    # Force C++20 for ALL pods
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+      end
+      
+      # Force-load TurboModules into the app target
+      if target.name == 'NewArchSpike'
+        target.build_configurations.each do |config|
+          # Add -force_load for our TurboModule libraries
+          config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited)'
+          config.build_settings['OTHER_LDFLAGS'] += ' -force_load ${BUILT_PRODUCTS_DIR}/libTurboCalculator.a'
+          config.build_settings['OTHER_LDFLAGS'] += ' -force_load ${BUILT_PRODUCTS_DIR}/libTurboDeviceInfo.a'
+        end
+      end
+    end
+    
     react_native_post_install(
       installer,
       config[:reactNativePath],

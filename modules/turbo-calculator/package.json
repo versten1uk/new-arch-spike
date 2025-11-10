@@ -1,0 +1,23 @@
+{
+  "name": "turbo-calculator",
+  "version": "1.0.0",
+  "description": "TurboModule for basic calculator operations",
+  "main": "index.ts",
+  "scripts": {},
+  "keywords": ["react-native", "turbo-module"],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "TurboCalculatorSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.turbocalculator"
+    }
+  }
+}
+

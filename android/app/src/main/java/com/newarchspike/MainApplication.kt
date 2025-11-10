@@ -6,6 +6,10 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
+import com.turbocalculator.TurboCalculatorPackage
+import com.turbodeviceinfo.TurboDeviceInfoPackage
+import com.simplestorage.SimpleStoragePackage
+import com.simplelogger.SimpleLoggerPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -14,8 +18,12 @@ class MainApplication : Application(), ReactApplication {
       context = applicationContext,
       packageList =
         PackageList(this).packages.apply {
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // add(MyReactNativePackage())
+          // TurboModules
+          add(TurboCalculatorPackage())
+          add(TurboDeviceInfoPackage())
+          // Simple Native Modules
+          add(SimpleStoragePackage())
+          add(SimpleLoggerPackage())
         },
     )
   }

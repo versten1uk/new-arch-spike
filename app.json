@@ -1,4 +1,11 @@
 {
   "name": "NewArchSpike",
-  "displayName": "NewArchSpike"
+  "displayName": "NewArchSpike",
+  "expo": {
+    "name": "NewArchSpike",
+    "slug": "newarchspike",
+    "version": "1.0.0",
+    "platforms": ["ios", "android"],
+    "plugins": []
+  }
 }

@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios", "android"],
+  "ios": {
+    "modules": ["ExpoLoggerModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.logger.ExpoLoggerModule"]
+  }
+}

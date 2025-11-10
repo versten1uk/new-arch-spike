@@ -1,0 +1,10 @@
+{
+  "platforms": ["ios", "android"],
+  "ios": {
+    "modules": ["CGWebViewModule"]
+  },
+  "android": {
+    "modules": ["CGWebViewModule"]
+  }
+}
+
