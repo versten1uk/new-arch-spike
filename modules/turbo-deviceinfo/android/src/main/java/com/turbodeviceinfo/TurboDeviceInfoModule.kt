@@ -1,13 +1,16 @@
 package com.turbodeviceinfo
 
 import android.os.Build
+import android.util.Log
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.module.annotations.ReactModule
 
+// Legacy module for Android (works with new arch too)
+// iOS uses proper TurboModule with codegen
 @ReactModule(name = TurboDeviceInfoModule.NAME)
-class TurboDeviceInfoModule(private val reactContext: ReactApplicationContext) :
+class TurboDeviceInfoModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String = NAME
@@ -24,22 +27,18 @@ class TurboDeviceInfoModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getBundleId(): String {
-        return reactContext.packageName
+        return reactApplicationContext.packageName
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun getDeviceModel(): String {
-        return getDeviceModelNative()
-    }
-    
-    // Native-only method - can be called directly from other native modules
-    // This works in bridgeless mode!
-    fun getDeviceModelNative(): String {
-        return "${Build.MANUFACTURER} ${Build.MODEL}"
+        val model = "${Build.MANUFACTURER} ${Build.MODEL}"
+        Log.d(TAG, "🔵 [CustomDeviceInfo] getDeviceModel() = $model")
+        return model
     }
 
     companion object {
-        const val NAME = "TurboDeviceInfo"
+        const val NAME = "CustomDeviceInfo"
+        private const val TAG = "CustomDeviceInfo"
     }
 }
-

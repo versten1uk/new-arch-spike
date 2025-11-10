@@ -6,13 +6,18 @@ android {
     compileSdk 34
 
     defaultConfig {
-        minSdk 26
+        minSdk 24
     }
 
     buildTypes {
         release {
             minifyEnabled false
         }
+    }
+    
+    // Disable codegen - using manual specs
+    buildFeatures {
+        buildConfig = false
     }
 }
 

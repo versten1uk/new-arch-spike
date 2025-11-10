@@ -5,30 +5,34 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
 class ExpoLoggerModule : Module() {
-    private var logCount = 0
-    private val TAG = "ExpoLogger"
-
     override fun definition() = ModuleDefinition {
         Name("ExpoLogger")
 
         AsyncFunction("logInfo") { message: String ->
             Log.i(TAG, message)
-            logCount++
+            // BRIDGELESS: Increment count via interop (shared with TurboModules)
+            ExpoLoggerInterop.getInstance(appContext.reactContext!!).incrementCount()
         }
 
         AsyncFunction("logWarning") { message: String ->
             Log.w(TAG, message)
-            logCount++
+            ExpoLoggerInterop.getInstance(appContext.reactContext!!).incrementCount()
         }
 
         AsyncFunction("logError") { message: String ->
             Log.e(TAG, message)
-            logCount++
+            ExpoLoggerInterop.getInstance(appContext.reactContext!!).incrementCount()
         }
 
         AsyncFunction("getLogCount") {
-            logCount
+            // BRIDGELESS: Read count via interop (TurboModules can write to this!)
+            val count = ExpoLoggerInterop.getInstance(appContext.reactContext!!).getCount()
+            Log.d(TAG, "📊 [BRIDGELESS] ExpoLogger.getLogCount() = $count")
+            count
         }
     }
-}
 
+    companion object {
+        private const val TAG = "ExpoLogger"
+    }
+}

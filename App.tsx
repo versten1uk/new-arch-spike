@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from 'react-native';
 import TurboCalculator from './modules/turbo-calculator';
 import TurboDeviceInfo from './modules/turbo-deviceinfo';
@@ -81,10 +82,10 @@ function App(): React.JSX.Element {
           </TouchableOpacity>
           {calcResult ? <Text style={styles.result}>{calcResult}</Text> : null}
           <Text style={styles.moduleInfo}>
-            Uses data from: ExpoLogger (log count)
+            Pattern: TurboCalculator → ExpoLogger (increments log count)
           </Text>
           <Text style={styles.nativeCallSuccess}>
-            ✅ TurboModule → ExpoLogger (bridgeless)
+            ✅ Bridgeless: TurboModule calls Expo Module
           </Text>
         </View>
 
@@ -95,20 +96,26 @@ function App(): React.JSX.Element {
             <Text style={styles.buttonText}>Get Device Model</Text>
           </TouchableOpacity>
           {deviceInfo ? <Text style={styles.result}>{deviceInfo}</Text> : null}
+          <Text style={styles.moduleInfo}>
+            Pattern: Consumed by ExpoStorage
+          </Text>
+          <Text style={styles.nativeCallSuccess}>
+            ✅ Bridgeless: Expo Module calls Turbo Module
+          </Text>
         </View>
 
         {/* Expo Module: Storage */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Expo Module: Storage</Text>
           <TouchableOpacity style={styles.button} onPress={testStorage}>
-            <Text style={styles.buttonText}>Store and Retrieve</Text>
+            <Text style={styles.buttonText}>Store and Retrieve "test-value"</Text>
           </TouchableOpacity>
           {storageResult ? <Text style={styles.result}>{storageResult}</Text> : null}
           <Text style={styles.moduleInfo}>
-            Uses data from: CustomDeviceInfo (device model)
+            Pattern: ExpoStorage → TurboDeviceInfo (appends device model to stored value)
           </Text>
           <Text style={styles.nativeCallSuccess}>
-            ✅ ExpoModule → TurboModule (bridgeless)
+            ✅ Bridgeless: Expo Module calls Turbo Module
           </Text>
         </View>
 
@@ -120,25 +127,10 @@ function App(): React.JSX.Element {
           </TouchableOpacity>
           <Text style={styles.result}>Log Count: {logCount}</Text>
           <Text style={styles.moduleInfo}>
-            Shared state accessed by TurboCalculator
+            Pattern: Logged from UI, also incremented by TurboCalculator
           </Text>
-        </View>
-
-        {/* Integration Test */}
-        <View style={[styles.section, styles.integrationSection]}>
-          <Text style={styles.sectionTitle}>🎯 Full Integration Test</Text>
-          <TouchableOpacity
-            style={[styles.button, styles.integrationButton]}
-            onPress={async () => {
-              await performCalculation();
-              await getDeviceInfo();
-              await testStorage();
-              await testLogger();
-            }}>
-            <Text style={styles.buttonText}>Run All Tests</Text>
-          </TouchableOpacity>
-          <Text style={styles.integrationInfo}>
-            Tests all module communications in bridgeless mode
+          <Text style={styles.nativeCallSuccess}>
+            ✅ Bridgeless: Turbo Module writes to Expo Module's shared state
           </Text>
         </View>
       </ScrollView>
@@ -150,6 +142,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingBottom: 50
   },
   scrollContent: {
     padding: 16,
@@ -169,8 +163,8 @@ const styles = StyleSheet.create({
   },
   section: {
     backgroundColor: '#fff',
-    padding: 16,
     borderRadius: 8,
+    padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -213,21 +207,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#34C759',
     fontWeight: '600',
-  },
-  integrationSection: {
-    backgroundColor: '#E8F5E9',
-    borderWidth: 2,
-    borderColor: '#4CAF50',
-  },
-  integrationButton: {
-    backgroundColor: '#4CAF50',
-  },
-  integrationInfo: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#2E7D32',
-    textAlign: 'center',
-    fontWeight: '500',
   },
 });
 

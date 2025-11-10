@@ -116,12 +116,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    // TurboModules
-    implementation project(':turbo-calculator')
-    implementation project(':turbo-deviceinfo')
-    
-    // Simple Native Modules
-    implementation project(':simple-storage')
-    implementation project(':simple-logger')
 }
+
+// Expo modules are autolinked via settings.gradle

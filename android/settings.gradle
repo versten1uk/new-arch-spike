@@ -1,18 +1,12 @@
 pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
+
+// Expo modules autolinking - must be applied in settings.gradle to create the manager
+apply from: new File(["node", "--print", "require.resolve('expo-modules-autolinking/package.json')"].execute(null, rootDir).text.trim(), "../scripts/android/autolinking_implementation.gradle")
+useExpoModules()
+
 rootProject.name = 'NewArchSpike'
+
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
-
-// TurboModules
-include ':turbo-calculator'
-project(':turbo-calculator').projectDir = new File(rootProject.projectDir, '../modules/turbo-calculator/android')
-include ':turbo-deviceinfo'
-project(':turbo-deviceinfo').projectDir = new File(rootProject.projectDir, '../modules/turbo-deviceinfo/android')
-
-// Simple Native Modules
-include ':simple-storage'
-project(':simple-storage').projectDir = new File(rootProject.projectDir, '../modules/simple-storage/android')
-include ':simple-logger'
-project(':simple-logger').projectDir = new File(rootProject.projectDir, '../modules/simple-logger/android')
