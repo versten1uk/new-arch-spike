@@ -23,5 +23,6 @@ android {
 
 dependencies {
     implementation 'com.facebook.react:react-android'
+    implementation project(':expo-logger')
 }
 

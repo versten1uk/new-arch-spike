@@ -5,6 +5,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.module.annotations.ReactModule
+import expo.modules.logger.ExpoLoggerInterop
 
 // Legacy module for Android (works with new arch too)
 // iOS uses proper TurboModule with codegen
@@ -19,16 +20,10 @@ class TurboCalculatorModule(reactContext: ReactApplicationContext) :
         val result = a + b
         Log.d(TAG, "🔵 [TurboCalculator] add called: $a + $b = $result")
         
-        // BRIDGELESS NATIVE-TO-NATIVE CALL: TurboModule → Expo Module
+        // BRIDGELESS NATIVE-TO-NATIVE CALL: TurboModule → Expo Module (NO REFLECTION!)
         try {
-            // Get ExpoLoggerInterop using reflection (Android's equivalent to NSClassFromString)
-            val interopClass = Class.forName("expo.modules.logger.ExpoLoggerInterop")
-            val getInstance = interopClass.getMethod("getInstance", android.content.Context::class.java)
-            val interop = getInstance.invoke(null, reactApplicationContext)
-            
-            val incrementMethod = interopClass.getMethod("incrementCount")
-            incrementMethod.invoke(interop)
-            
+            val interop = ExpoLoggerInterop.getInstance(reactApplicationContext)
+            interop.incrementCount()
             Log.d(TAG, "✅ [BRIDGELESS] TurboCalculator → ExpoLogger: Incremented count")
         } catch (e: Exception) {
             Log.e(TAG, "❌ [TurboCalculator] Failed to call ExpoLogger: ${e.message}")
