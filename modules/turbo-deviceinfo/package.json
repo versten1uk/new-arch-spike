@@ -10,6 +10,11 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "CustomDeviceInfoSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
   }
 }
 

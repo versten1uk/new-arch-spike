@@ -1,33 +1,46 @@
 import ExpoModulesCore
-import os.log
 
+/**
+ * ExpoLoggerModule - Thin Expo Module wrapper
+ * 
+ * This is a THIN WRAPPER that exposes ExpoLoggerCore to JavaScript.
+ * All business logic lives in ExpoLoggerCore.
+ * 
+ * Benefits:
+ * - ExpoLoggerCore can be called from JS (via this module) or natively (via ModuleInterop)
+ * - ExpoLoggerCore can be unit tested without React Native
+ * - State is owned by ExpoLoggerCore, not by the wrapper
+ */
 public class ExpoLoggerModule: Module {
-    private let logger = OSLog(subsystem: "com.newarchspike", category: "ExpoLogger")
     
     public func definition() -> ModuleDefinition {
         Name("ExpoLogger")
         
         AsyncFunction("logInfo") { (message: String) in
-            os_log("%{public}@", log: self.logger, type: .info, message)
-            // BRIDGELESS: Increment count via interop (shared with TurboModules)
-            ExpoLoggerInterop.shared().incrementCount()
+            // Delegate to Core (which owns the logic and state)
+            ExpoLoggerCore.shared().logInfo(message)
         }
         
         AsyncFunction("logWarning") { (message: String) in
-            os_log("%{public}@", log: self.logger, type: .default, message)
-            ExpoLoggerInterop.shared().incrementCount()
+            // Delegate to Core (which owns the logic and state)
+            ExpoLoggerCore.shared().logWarning(message)
         }
         
         AsyncFunction("logError") { (message: String) in
-            os_log("%{public}@", log: self.logger, type: .error, message)
-            ExpoLoggerInterop.shared().incrementCount()
+            // Delegate to Core (which owns the logic and state)
+            ExpoLoggerCore.shared().logError(message)
         }
         
         AsyncFunction("getLogCount") { () -> Int in
-            // BRIDGELESS: Read count via interop (TurboModules can write to this!)
-            let count = ExpoLoggerInterop.shared().getCount()
-            NSLog("📊 [BRIDGELESS] ExpoLogger.getLogCount() = %d", count)
+            // Delegate to Core (which owns the state)
+            let count = ExpoLoggerCore.shared().getLogCount()
+            print("📊 [ExpoLoggerModule] getLogCount() = \(count) (from Core)")
             return Int(count)
+        }
+        
+        AsyncFunction("resetLogCount") { () in
+            // Reset count (useful for development/testing)
+            ExpoLoggerCore.shared().resetCount()
         }
     }
 }

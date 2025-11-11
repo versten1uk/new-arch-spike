@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -19,6 +19,20 @@ function App(): React.JSX.Element {
   const [deviceInfo, setDeviceInfo] = useState<string>('');
   const [storageResult, setStorageResult] = useState<string>('');
   const [logCount, setLogCount] = useState<number>(0);
+
+  // Initialize log count from native on mount
+  useEffect(() => {
+    const initLogCount = async () => {
+      try {
+        const count = await ExpoLogger.getLogCount();
+        setLogCount(count);
+        console.log('📊 [App] Initialized log count from native:', count);
+      } catch (error) {
+        console.error('Failed to get initial log count:', error);
+      }
+    };
+    initLogCount();
+  }, []);
 
   const performCalculation = async () => {
     try {
@@ -64,6 +78,16 @@ function App(): React.JSX.Element {
       setLogCount(count);
     } catch (error) {
       console.error('ExpoLogger error:', error);
+    }
+  };
+
+  const resetLogger = async () => {
+    try {
+      await ExpoLogger.resetLogCount();
+      const count = await ExpoLogger.getLogCount();
+      setLogCount(count);
+    } catch (error) {
+      console.error('ExpoLogger reset error:', error);
     }
   };
 
@@ -119,20 +143,23 @@ function App(): React.JSX.Element {
           </Text>
         </View>
 
-        {/* Expo Module: Logger */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Expo Module: Logger</Text>
-          <TouchableOpacity style={styles.button} onPress={testLogger}>
-            <Text style={styles.buttonText}>Log Message</Text>
-          </TouchableOpacity>
-          <Text style={styles.result}>Log Count: {logCount}</Text>
-          <Text style={styles.moduleInfo}>
-            Pattern: Logged from UI, also incremented by TurboCalculator
-          </Text>
-          <Text style={styles.nativeCallSuccess}>
-            ✅ Bridgeless: Turbo Module writes to Expo Module's shared state
-          </Text>
-        </View>
+            {/* Expo Module: Logger */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Expo Module: Logger</Text>
+              <TouchableOpacity style={styles.button} onPress={testLogger}>
+                <Text style={styles.buttonText}>Log Message</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.resetButton]} onPress={resetLogger}>
+                <Text style={styles.buttonText}>Reset Count</Text>
+              </TouchableOpacity>
+              <Text style={styles.result}>Log Count: {logCount}</Text>
+              <Text style={styles.moduleInfo}>
+                Pattern: Logged from UI, also incremented by TurboCalculator
+              </Text>
+              <Text style={styles.nativeCallSuccess}>
+                ✅ Bridgeless: Turbo Module writes to Expo Module's shared state
+              </Text>
+            </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -184,6 +211,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: 'center',
     marginBottom: 8,
+  },
+  resetButton: {
+    backgroundColor: '#FF3B30',
   },
   buttonText: {
     color: '#fff',

@@ -18,6 +18,7 @@ if (!ExpoLoggerModule) {
     logWarning: async () => { console.warn('[ExpoLogger] Stub - module not loaded'); },
     logError: async () => { console.error('[ExpoLogger] Stub - module not loaded'); },
     getLogCount: async () => { return 0; },
+    resetLogCount: async () => { console.log('[ExpoLogger] Stub - reset not available'); },
   };
 }
 
@@ -33,5 +34,8 @@ export default {
   },
   getLogCount: async (): Promise<number> => {
     return await ExpoLoggerModule.getLogCount();
+  },
+  resetLogCount: async (): Promise<void> => {
+    return await ExpoLoggerModule.resetLogCount();
   },
 };

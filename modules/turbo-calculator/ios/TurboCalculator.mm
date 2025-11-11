@@ -1,6 +1,6 @@
 #import "TurboCalculator.h"
-#import <ExpoLogger/ExpoLoggerInterop.h>
-#import "TurboCalculatorSpec.h"
+#import <ModuleInterop/ModuleInterop.h>
+#import <TurboCalculatorSpec/TurboCalculatorSpec.h>
 
 @implementation TurboCalculator
 
@@ -15,9 +15,9 @@ RCT_EXPORT_MODULE()
     double result = a + b;
     NSLog(@"🔵 [TurboCalculator] add called: %.0f + %.0f = %.0f", a, b, result);
     
-    // BRIDGELESS NATIVE-TO-NATIVE CALL: TurboModule → Expo Module
-    [[ExpoLoggerInterop shared] incrementCount];
-    NSLog(@"✅ [BRIDGELESS] TurboCalculator → ExpoLogger: Incremented count");
+        // BRIDGELESS NATIVE-TO-NATIVE CALL: TurboModule → ModuleInterop
+        [[ModuleInterop shared] incrementLogCount];
+        NSLog(@"✅ [BRIDGELESS] TurboCalculator → ModuleInterop: Incremented log count");
     
     return @(result);
 }

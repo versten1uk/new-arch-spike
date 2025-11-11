@@ -1,5 +1,6 @@
 import ExpoModulesCore
 import Foundation
+import ModuleInterop
 
 public class ExpoStorageModule: Module {
     private var storage: [String: String] = [:]
@@ -8,39 +9,17 @@ public class ExpoStorageModule: Module {
         Name("ExpoStorage")
         
         AsyncFunction("setItem") { (key: String, value: String) in
-            NSLog("🔵 [ExpoStorage] setItem called with key='%@' value='%@'", key, value)
+            print("🔵 [ExpoStorage] setItem called with key='\(key)' value='\(value)'")
             
-            // BRIDGELESS NATIVE-TO-NATIVE CALL: Expo Module → TurboModule
-            var deviceModel = "unknown"
-            
-            // Direct instantiation of TurboDeviceInfo (BRIDGELESS approach)
-            NSLog("🔍 [ExpoStorage] Looking for TurboDeviceInfo class...")
-            if let turboDeviceInfoClass = NSClassFromString("TurboDeviceInfo") as? NSObject.Type {
-                NSLog("✓ [ExpoStorage] Found TurboDeviceInfo class, creating instance...")
-                let turboDeviceInfo = turboDeviceInfoClass.init()
-                let selector = NSSelectorFromString("getDeviceModel")
-                
-                NSLog("🔍 [ExpoStorage] Checking if TurboDeviceInfo responds to getDeviceModel...")
-                if turboDeviceInfo.responds(to: selector) {
-                    NSLog("✓ [ExpoStorage] TurboDeviceInfo responds to getDeviceModel, calling it...")
-                    if let result = turboDeviceInfo.perform(selector)?.takeUnretainedValue() as? String {
-                        deviceModel = result
-                        NSLog("✅ [BRIDGELESS] ExpoStorage → TurboDeviceInfo: Got '%@'", result)
-                    } else {
-                        NSLog("❌ [ExpoStorage] perform() returned nil or not a String")
-                    }
-                } else {
-                    NSLog("❌ [ExpoStorage] TurboDeviceInfo does NOT respond to getDeviceModel")
-                }
-            } else {
-                NSLog("❌ [ExpoStorage] TurboDeviceInfo class NOT FOUND")
-            }
+            // BRIDGELESS NATIVE-TO-NATIVE CALL: Expo Module → ModuleInterop (NO REFLECTION!)
+            let deviceModel = ModuleInterop.shared().getDeviceModel()
+            print("✅ [BRIDGELESS] ExpoStorage → ModuleInterop: Got '\(deviceModel)'")
             
             // Store value WITH device model appended to prove the call worked
             let enrichedValue = "\(value) [Device: \(deviceModel)]"
             self.storage[key] = enrichedValue
             
-            NSLog("📦 [ExpoStorage] Stored: '%@' = '%@'", key, enrichedValue)
+            print("📦 [ExpoStorage] Stored: '\(key)' = '\(enrichedValue)'")
         }
         
         AsyncFunction("getItem") { (key: String) -> String? in

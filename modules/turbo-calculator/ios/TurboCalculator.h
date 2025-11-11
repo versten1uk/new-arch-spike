@@ -2,7 +2,7 @@
 #import <React/RCTBridgeModule.h>
 
 #ifdef RCT_NEW_ARCH_ENABLED
-#import "TurboCalculatorSpec.h"
+#import <TurboCalculatorSpec/TurboCalculatorSpec.h>
 @interface TurboCalculator : NSObject <NativeTurboCalculatorSpec>
 #else
 @interface TurboCalculator : NSObject <RCTBridgeModule>

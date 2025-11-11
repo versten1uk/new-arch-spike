@@ -9,4 +9,7 @@ useExpoModules()
 rootProject.name = 'NewArchSpike'
 
 include ':app'
+include ':module-interop'
+project(':module-interop').projectDir = new File(rootProject.projectDir, '../modules/module-interop/android')
+
 includeBuild('../node_modules/@react-native/gradle-plugin')

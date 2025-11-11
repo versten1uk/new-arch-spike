@@ -1,7 +1,7 @@
 package expo.modules.storage
 
 import android.util.Log
-import com.turbodeviceinfo.TurboDeviceInfoInterop
+import com.moduleinterop.ModuleInterop
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -14,14 +14,14 @@ class ExpoStorageModule : Module() {
         AsyncFunction("setItem") { key: String, value: String ->
             Log.d(TAG, "🔵 [ExpoStorage] setItem called with key='$key' value='$value'")
             
-            // BRIDGELESS NATIVE-TO-NATIVE CALL: Expo Module → TurboModule (NO REFLECTION!)
+            // BRIDGELESS NATIVE-TO-NATIVE CALL: Expo Module → ModuleInterop (NO REFLECTION!)
             val deviceModel = try {
-                val interop = TurboDeviceInfoInterop.getInstance(appContext.reactContext!!)
+                val interop = ModuleInterop.getInstance(appContext.reactContext!!)
                 val model = interop.getDeviceModel()
-                Log.d(TAG, "✅ [BRIDGELESS] ExpoStorage → TurboDeviceInfo: Got '$model'")
+                Log.d(TAG, "✅ [BRIDGELESS] ExpoStorage → ModuleInterop: Got '$model'")
                 model
             } catch (e: Exception) {
-                Log.e(TAG, "❌ [ExpoStorage] Failed to call TurboDeviceInfo: ${e.message}")
+                Log.e(TAG, "❌ [ExpoStorage] Failed to call ModuleInterop: ${e.message}")
                 e.printStackTrace()
                 "unknown"
             }

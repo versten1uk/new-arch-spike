@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.public_header_files = "ios/DeviceInfoCore.h"
   
   s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
   s.pod_target_xcconfig = {

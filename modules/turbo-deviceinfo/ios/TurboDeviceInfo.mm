@@ -1,26 +1,41 @@
 #import "TurboDeviceInfo.h"
-#import <UIKit/UIKit.h>
-#import "CustomDeviceInfoSpec.h"
+#import "DeviceInfoCore.h"
+#import <CustomDeviceInfoSpec/CustomDeviceInfoSpec.h>
 
+/**
+ * TurboDeviceInfo - Thin TurboModule wrapper
+ * 
+ * This is a THIN WRAPPER that exposes DeviceInfoCore to JavaScript.
+ * All business logic lives in DeviceInfoCore.
+ * 
+ * Benefits:
+ * - DeviceInfoCore can be called from JS (via this module) or natively (via ModuleInterop)
+ * - DeviceInfoCore can be unit tested without React Native
+ * - Logic is owned by DeviceInfoCore, not by the wrapper
+ */
 @implementation TurboDeviceInfo
 
 RCT_EXPORT_MODULE(CustomDeviceInfo)
 
 - (NSString *)getDeviceName {
-    return [[UIDevice currentDevice] name];
+    // Delegate to Core (which owns the logic)
+    return [[DeviceInfoCore shared] getDeviceName];
 }
 
 - (NSString *)getSystemVersion {
-    return [[UIDevice currentDevice] systemVersion];
+    // Delegate to Core (which owns the logic)
+    return [[DeviceInfoCore shared] getSystemVersion];
 }
 
 - (NSString *)getBundleId {
-    return [[NSBundle mainBundle] bundleIdentifier];
+    // Delegate to Core (which owns the logic)
+    return [[DeviceInfoCore shared] getBundleId];
 }
 
 - (NSString *)getDeviceModel {
-    NSString *model = [[UIDevice currentDevice] model];
-    NSLog(@"🔵 [CustomDeviceInfo] getDeviceModel() = %@", model);
+    // Delegate to Core (which owns the logic)
+    NSString *model = [[DeviceInfoCore shared] getDeviceModel];
+    NSLog(@"🔵 [TurboDeviceInfo] getDeviceModel() = %@ (from Core)", model);
     return model;
 }
 

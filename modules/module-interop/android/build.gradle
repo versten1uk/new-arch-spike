@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-    namespace "expo.modules.storage"
+    namespace "com.moduleinterop"
     compileSdk 34
 
     defaultConfig {
@@ -17,8 +17,8 @@ android {
 }
 
 dependencies {
-    implementation project(':expo-modules-core')
     implementation 'com.facebook.react:react-android'
-    implementation project(':module-interop')
+    implementation project(':expo-logger')
+    implementation project(':turbo-deviceinfo')
 }
 

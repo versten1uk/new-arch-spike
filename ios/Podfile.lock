@@ -41,6 +41,7 @@ PODS:
     - Yoga
   - ExpoStorage (1.0.0):
     - ExpoModulesCore
+    - ModuleInterop
   - fast_float (6.1.4)
   - FBLazyVector (0.77.2)
   - fmt (11.0.2)
@@ -48,6 +49,29 @@ PODS:
   - hermes-engine (0.77.2):
     - hermes-engine/Pre-built (= 0.77.2)
   - hermes-engine/Pre-built (0.77.2)
+  - ModuleInterop (1.0.0):
+    - DoubleConversion
+    - ExpoLogger
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - TurboDeviceInfo
+    - Yoga
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -1543,9 +1567,9 @@ PODS:
   - SocketRocket (0.7.1)
   - TurboCalculator (1.0.0):
     - DoubleConversion
-    - ExpoLogger
     - glog
     - hermes-engine
+    - ModuleInterop
     - RCT-Folly (= 2024.11.18.00)
     - RCTRequired
     - RCTTypeSafety
@@ -1605,6 +1629,7 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
+  - ModuleInterop (from `../node_modules/module-interop`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -1708,6 +1733,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2024-11-25-RNv0.77.0-d4f25d534ab744866448b36ca3bf3d97c08e638c
+  ModuleInterop:
+    :path: "../node_modules/module-interop"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTDeprecation:
@@ -1840,14 +1867,15 @@ SPEC CHECKSUMS:
   ExpoFileSystem: 42d363d3b96f9afab980dcef60d5657a4443c655
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
   ExpoKeepAwake: b0171a73665bfcefcfcc311742a72a956e6aa680
-  ExpoLogger: 5efb1d0814c8af4007d75f90d8081e27fecba40b
+  ExpoLogger: ceac8ba4eae100485a51f3f389c1ec9657c5e80a
   ExpoModulesCore: 5f742a35aa7861bb7d9cde9a2f64ef62032355f5
-  ExpoStorage: 5ee77641583ebc9fc193969794716691c5c22010
+  ExpoStorage: aa4b0a0f318814814e622a133f9eda69b9c0a969
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 4c16dde959a9d6b24f2aa32cb87cb919a1ace3f3
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
   hermes-engine: 8eb265241fa1d7095d3a40d51fd90f7dce68217c
+  ModuleInterop: 370a16230cd321bd2a674874031d41a1f6038a0f
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 85b72250b63cfb54f29ca96ceb108cb9ef3c2079
   RCTRequired: 567cb8f5d42b990331bfd93faad1d8999b1c1736
@@ -1908,8 +1936,8 @@ SPEC CHECKSUMS:
   ReactCodegen: 6f764a42662ad6379fd3fbb9c09baff6e4797b20
   ReactCommon: 7763e59534d58e15f8f22121cdfe319040e08888
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  TurboCalculator: 8aa1e8cd2d91d3919b82f53bc78e1e5797fe1f1e
-  TurboDeviceInfo: bf3589de35406e581517fc6b724003284d5ec3a0
+  TurboCalculator: 49d98924cf7b70447b292fdd85c33b6477882579
+  TurboDeviceInfo: e9296575b93564c38da461ae701b83625f75dc24
   Yoga: 31a098f74c16780569aebd614a0f37a907de0189
 
 PODFILE CHECKSUM: 90f62c75a3a9bc6fc72d183fcfc94976b277aa97

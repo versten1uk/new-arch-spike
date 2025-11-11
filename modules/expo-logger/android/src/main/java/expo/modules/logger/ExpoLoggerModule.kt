@@ -4,35 +4,50 @@ import android.util.Log
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
+/**
+ * ExpoLoggerModule - Thin Expo Module wrapper
+ * 
+ * This is a THIN WRAPPER that exposes ExpoLoggerCore to JavaScript.
+ * All business logic lives in ExpoLoggerCore.
+ * 
+ * Benefits:
+ * - ExpoLoggerCore can be called from JS (via this module) or natively (via ModuleInterop)
+ * - ExpoLoggerCore can be unit tested without React Native
+ * - State is owned by ExpoLoggerCore, not by the wrapper
+ */
 class ExpoLoggerModule : Module() {
     override fun definition() = ModuleDefinition {
         Name("ExpoLogger")
 
         AsyncFunction("logInfo") { message: String ->
-            Log.i(TAG, message)
-            // BRIDGELESS: Increment count via interop (shared with TurboModules)
-            ExpoLoggerInterop.getInstance(appContext.reactContext!!).incrementCount()
+            // Delegate to Core (which owns the logic and state)
+            ExpoLoggerCore.getInstance().logInfo(message)
         }
 
         AsyncFunction("logWarning") { message: String ->
-            Log.w(TAG, message)
-            ExpoLoggerInterop.getInstance(appContext.reactContext!!).incrementCount()
+            // Delegate to Core (which owns the logic and state)
+            ExpoLoggerCore.getInstance().logWarning(message)
         }
 
         AsyncFunction("logError") { message: String ->
-            Log.e(TAG, message)
-            ExpoLoggerInterop.getInstance(appContext.reactContext!!).incrementCount()
+            // Delegate to Core (which owns the logic and state)
+            ExpoLoggerCore.getInstance().logError(message)
         }
 
         AsyncFunction("getLogCount") {
-            // BRIDGELESS: Read count via interop (TurboModules can write to this!)
-            val count = ExpoLoggerInterop.getInstance(appContext.reactContext!!).getCount()
-            Log.d(TAG, "📊 [BRIDGELESS] ExpoLogger.getLogCount() = $count")
+            // Delegate to Core (which owns the state)
+            val count = ExpoLoggerCore.getInstance().getLogCount()
+            Log.d(TAG, "📊 [ExpoLoggerModule] getLogCount() = $count (from Core)")
             count
+        }
+        
+        AsyncFunction("resetLogCount") {
+            // Reset count (useful for development/testing)
+            ExpoLoggerCore.getInstance().resetCount()
         }
     }
 
     companion object {
-        private const val TAG = "ExpoLogger"
+        private const val TAG = "ExpoLoggerModule"
     }
 }

@@ -10,6 +10,11 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
+  },
+  "codegenConfig": {
+    "name": "TurboCalculatorSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
   }
 }
 

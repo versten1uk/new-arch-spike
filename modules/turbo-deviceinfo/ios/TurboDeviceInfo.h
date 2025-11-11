@@ -2,7 +2,7 @@
 #import <React/RCTBridgeModule.h>
 
 #ifdef RCT_NEW_ARCH_ENABLED
-#import "CustomDeviceInfoSpec.h"
+#import <CustomDeviceInfoSpec/CustomDeviceInfoSpec.h>
 @interface TurboDeviceInfo : NSObject <NativeTurboDeviceInfoSpec>
 #else
 @interface TurboDeviceInfo : NSObject <RCTBridgeModule>
