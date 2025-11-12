@@ -13,6 +13,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.public_header_files = "ios/StorageCore.h"
 
   s.dependency "ExpoModulesCore"
   s.dependency "ModuleInterop"

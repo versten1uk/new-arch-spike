@@ -1,12 +1,9 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <CustomDeviceInfoSpec/CustomDeviceInfoSpec.h>
-@interface TurboDeviceInfo : NSObject <NativeTurboDeviceInfoSpec>
-#else
+// Using bridge module interface (works on both old and new arch)
+// For production cg-webview, use proper TurboModule with codegen
 @interface TurboDeviceInfo : NSObject <RCTBridgeModule>
-#endif
 
 @end
 

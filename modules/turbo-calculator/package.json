@@ -14,7 +14,10 @@
   "codegenConfig": {
     "name": "TurboCalculatorSpec",
     "type": "modules",
-    "jsSrcsDir": "src"
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.turbocalculator"
+    }
   }
 }
 

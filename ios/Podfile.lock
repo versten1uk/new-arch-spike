@@ -1867,9 +1867,9 @@ SPEC CHECKSUMS:
   ExpoFileSystem: 42d363d3b96f9afab980dcef60d5657a4443c655
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
   ExpoKeepAwake: b0171a73665bfcefcfcc311742a72a956e6aa680
-  ExpoLogger: ceac8ba4eae100485a51f3f389c1ec9657c5e80a
+  ExpoLogger: dbba09778ba2d71d9cd2cc4b5f29318af8206446
   ExpoModulesCore: 5f742a35aa7861bb7d9cde9a2f64ef62032355f5
-  ExpoStorage: aa4b0a0f318814814e622a133f9eda69b9c0a969
+  ExpoStorage: 54206377fdf237b47e63e0e7f44af07cc27cd1d3
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 4c16dde959a9d6b24f2aa32cb87cb919a1ace3f3
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd

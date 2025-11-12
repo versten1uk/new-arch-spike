@@ -9,6 +9,17 @@ useExpoModules()
 rootProject.name = 'NewArchSpike'
 
 include ':app'
+
+// Manually include modules that module-interop depends on
+include ':expo-logger'
+project(':expo-logger').projectDir = new File(rootProject.projectDir, '../node_modules/expo-logger/android')
+
+include ':turbo-deviceinfo'
+project(':turbo-deviceinfo').projectDir = new File(rootProject.projectDir, '../node_modules/turbo-deviceinfo/android')
+
+include ':turbo-calculator'
+project(':turbo-calculator').projectDir = new File(rootProject.projectDir, '../node_modules/turbo-calculator/android')
+
 include ':module-interop'
 project(':module-interop').projectDir = new File(rootProject.projectDir, '../modules/module-interop/android')
 

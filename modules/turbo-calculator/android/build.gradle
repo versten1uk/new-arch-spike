@@ -14,11 +14,6 @@ android {
             minifyEnabled false
         }
     }
-    
-    // Disable codegen - using manual specs
-    buildFeatures {
-        buildConfig = false
-    }
 }
 
 dependencies {

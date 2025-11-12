@@ -1,12 +1,9 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTBridgeModule.h>
 
-#ifdef RCT_NEW_ARCH_ENABLED
-#import <TurboCalculatorSpec/TurboCalculatorSpec.h>
-@interface TurboCalculator : NSObject <NativeTurboCalculatorSpec>
-#else
+// Using bridge module interface (works on both old and new arch)
+// For production cg-webview, use proper TurboModule with codegen
 @interface TurboCalculator : NSObject <RCTBridgeModule>
-#endif
 
 @end
 

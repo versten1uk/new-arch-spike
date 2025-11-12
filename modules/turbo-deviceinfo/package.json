@@ -14,7 +14,10 @@
   "codegenConfig": {
     "name": "CustomDeviceInfoSpec",
     "type": "modules",
-    "jsSrcsDir": "src"
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.turbodeviceinfo"
+    }
   }
 }
 

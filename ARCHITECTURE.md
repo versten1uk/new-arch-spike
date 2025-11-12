@@ -8,19 +8,54 @@ This POC demonstrates the **correct architecture** for cross-module communicatio
 
 ## 📐 **Three-Layer Architecture**
 
-### **Layer 1: Core Classes** (Pure Native)
+### **Layer 1: Core Classes** (Pure Native) - **ONLY for Stateful Modules**
 - **Purpose**: Contains ALL business logic and state
 - **Dependencies**: ZERO React Native dependencies
+- **When to use**: ONLY if your module has **state** or **complex business logic**
 - **Benefits**:
   - Can be unit tested without RN runtime
   - Can be called from anywhere (JS modules, other native modules, tests)
   - Easy to maintain and debug
+  - State persists across JS reloads
 
 **Examples:**
-- `ExpoLoggerCore` - Owns `logCount`, implements logging logic
-- `DeviceInfoCore` - Implements device info retrieval logic
-- `AppsFlyerCore` (production) - Wraps AppsFlyer SDK, owns tracking state
-- `FirebaseCore` (production) - Wraps Firebase SDK, owns analytics state
+- ✅ `ExpoLoggerCore` - Owns `logCount` state, implements logging logic
+- ✅ `DeviceInfoCore` - Implements device info retrieval (used by multiple modules)
+- ✅ `StorageCore` - Owns `storage` map state
+- ✅ `AppsFlyerCore` (production) - Wraps AppsFlyer SDK, owns tracking state
+- ✅ `FirebaseCore` (production) - Wraps Firebase SDK, owns analytics state
+
+**When NOT to use Core classes:**
+- ❌ **Stateless modules** (e.g., `TurboCalculator` - just math, no state)
+- ❌ **Simple wrappers** with no business logic
+- ❌ **One-off utilities** that don't need cross-module access
+
+**Example of stateless module (NO Core needed):**
+```objc
+// TurboCalculator.mm - Simple stateless wrapper, NO Core needed
+- (NSNumber *)add:(double)a b:(double)b {
+    return @(a + b);  // No state, no complex logic
+}
+```
+
+**Decision Tree: Do I need a Core class?**
+
+```
+Does your module have STATE (variables that persist)?
+├─ YES → ✅ Create Core class
+│   Examples: logCount, storage map, user session, SDK state
+│
+└─ NO → Does it need to be called by OTHER NATIVE MODULES?
+    ├─ YES → ✅ Create Core class (for ModuleInterop access)
+    │   Examples: DeviceInfo (used by Storage), Analytics (used by WebView)
+    │
+    └─ NO → Is the logic complex or testable?
+        ├─ YES → ✅ Create Core class (for unit testing)
+        │   Examples: Encryption, Data parsing, Business logic
+        │
+        └─ NO → ❌ Direct implementation is fine
+            Examples: Simple math, String formatting, One-off utilities
+```
 
 ---
 
@@ -214,6 +249,25 @@ This architecture works on **both old and new architecture**:
 | **ModuleInterop** | ✅ Works (pure native) | ✅ Works (bridgeless) |
 
 **The Core classes are ALWAYS native-to-native, regardless of architecture!**
+
+---
+
+## 📂 **POC Module Structure**
+
+This POC demonstrates both patterns (with and without Core):
+
+| Module | Type | Has Core? | Reason |
+|--------|------|-----------|--------|
+| **ExpoLogger** | Expo | ✅ `ExpoLoggerCore` | Has **state** (`logCount`) + used by TurboCalculator |
+| **TurboDeviceInfo** | Turbo | ✅ `DeviceInfoCore` | **Stateless** but used by ExpoStorage (cross-module) |
+| **ExpoStorage** | Expo | ✅ `StorageCore` | Has **state** (`storage` map) |
+| **TurboCalculator** | Turbo | ❌ No Core | **Stateless** (just math) - direct implementation is fine |
+| **ModuleInterop** | Facade | N/A | **Stateless facade** - delegates to Core classes |
+
+**For Production:**
+- ✅ **All stateful modules** use Core classes (Logger, Storage, Device Info)
+- ✅ **Stateless modules** use direct implementation (Calculator)
+- ✅ **ModuleInterop** remains a stateless facade
 
 ---
 
