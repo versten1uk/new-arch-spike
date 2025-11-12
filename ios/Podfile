@@ -51,16 +51,6 @@ target 'NewArchSpike' do
       target.build_configurations.each do |config|
         config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
       end
-      
-      # Force-load TurboModules into the app target
-      if target.name == 'NewArchSpike'
-        target.build_configurations.each do |config|
-          # Add -force_load for our TurboModule libraries
-          config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited)'
-          config.build_settings['OTHER_LDFLAGS'] += ' -force_load ${BUILT_PRODUCTS_DIR}/libTurboCalculator.a'
-          config.build_settings['OTHER_LDFLAGS'] += ' -force_load ${BUILT_PRODUCTS_DIR}/libTurboDeviceInfo.a'
-        end
-      end
     end
     
     react_native_post_install(

@@ -13,14 +13,12 @@ This POC demonstrates the **correct architecture** for cross-module communicatio
 - **Dependencies**: ZERO React Native dependencies
 - **When to use**: ONLY if your module has **state** or **complex business logic**
 - **Benefits**:
-  - Can be unit tested without RN runtime
-  - Can be called from anywhere (JS modules, other native modules, tests)
+  - Can be called from anywhere (JS modules, other native modules)
   - Easy to maintain and debug
   - State persists across JS reloads
 
 **Examples:**
 - ✅ `ExpoLoggerCore` - Owns `logCount` state, implements logging logic
-- ✅ `DeviceInfoCore` - Implements device info retrieval (used by multiple modules)
 - ✅ `StorageCore` - Owns `storage` map state
 - ✅ `AppsFlyerCore` (production) - Wraps AppsFlyer SDK, owns tracking state
 - ✅ `FirebaseCore` (production) - Wraps Firebase SDK, owns analytics state
@@ -39,23 +37,6 @@ This POC demonstrates the **correct architecture** for cross-module communicatio
 ```
 
 **Decision Tree: Do I need a Core class?**
-
-```
-Does your module have STATE (variables that persist)?
-├─ YES → ✅ Create Core class
-│   Examples: logCount, storage map, user session, SDK state
-│
-└─ NO → Does it need to be called by OTHER NATIVE MODULES?
-    ├─ YES → ✅ Create Core class (for ModuleInterop access)
-    │   Examples: DeviceInfo (used by Storage), Analytics (used by WebView)
-    │
-    └─ NO → Is the logic complex or testable?
-        ├─ YES → ✅ Create Core class (for unit testing)
-        │   Examples: Encryption, Data parsing, Business logic
-        │
-        └─ NO → ❌ Direct implementation is fine
-            Examples: Simple math, String formatting, One-off utilities
-```
 
 ---
 
@@ -80,10 +61,10 @@ public class ExpoLoggerModule: Module {
 ```
 
 ```objc
-// TurboDeviceInfo.mm (Thin TurboModule)
+// TurboDeviceInfo.mm (Stateless TurboModule - direct implementation)
 - (NSString *)getDeviceModel {
-    // Just delegate to Core
-    return [[DeviceInfoCore shared] getDeviceModel];
+    // Self-contained, uses iOS APIs directly
+    return [[UIDevice currentDevice] model];
 }
 ```
 
@@ -97,16 +78,29 @@ public class ExpoLoggerModule: Module {
 
 **Example:**
 ```kotlin
-// ModuleInterop.kt (lives in cg-webview)
+// ModuleInterop.kt (lives in cg-webview in production)
 class ModuleInterop {
-    fun logAppsFlyerEvent(name: String, params: Map<String, Any>) {
-        // Delegate to AppsFlyerCore (which owns the logic)
-        AppsFlyerCore.getInstance().logEvent(name, params)
+    // Logger facade
+    fun logInfo(message: String) {
+        ExpoLoggerCore.getInstance().logInfo(message)
     }
     
-    fun getDeviceInfo(): DeviceInfo {
-        // Delegate to DeviceInfoCore (which owns the logic)
-        return DeviceInfoCore.getInstance().getDeviceInfo()
+    fun getLogCount(): Int {
+        return ExpoLoggerCore.getInstance().getLogCount()
+    }
+    
+    // Storage facade
+    fun setItem(key: String, value: String) {
+        StorageCore.getInstance().setItem(key, value)
+    }
+    
+    fun getItem(key: String): String? {
+        return StorageCore.getInstance().getItem(key)
+    }
+    
+    // Production: Add your modules here
+    fun trackAppsFlyerEvent(name: String, params: Map<String, Any>) {
+        AppsFlyerCore.getInstance().logEvent(name, params)
     }
 }
 ```
@@ -133,16 +127,18 @@ ModuleInterop (stateless facade)
 AppsFlyerCore (owns state & logic) ✅ State lives here!
 ```
 
-### **Cross-Module Communication**
+### **Cross-Module Communication (Bridgeless)**
 ```
 TurboCalculator.add()
-  ↓
-ModuleInterop.incrementLogCount()
-  ↓
+  ↓ (native call, no bridge)
+ModuleInterop.logInfo("message")
+  ↓ (delegates)
 ExpoLoggerCore.logInfo() ✅ State incremented here!
-  ↑
-ExpoLoggerModule.getLogCount() reads from ExpoLoggerCore
+  ↑ (reads state)
+ExpoLoggerModule.getLogCount() ← JavaScript calls this
 ```
+
+**Key Point:** TurboModule → ModuleInterop → ExpoCore is **100% native, bridgeless!**
 
 ---
 
@@ -152,7 +148,6 @@ ExpoLoggerModule.getLogCount() reads from ExpoLoggerCore
 2. **Module wrappers are THIN** - just adapters to JavaScript
 3. **ModuleInterop is STATELESS** - just a facade for routing calls
 4. **NO REFLECTION** - compile-time safety with direct imports
-5. **Unit testable** - Core classes can be tested without React Native
 
 ---
 
@@ -258,16 +253,16 @@ This POC demonstrates both patterns (with and without Core):
 
 | Module | Type | Has Core? | Reason |
 |--------|------|-----------|--------|
-| **ExpoLogger** | Expo | ✅ `ExpoLoggerCore` | Has **state** (`logCount`) + used by TurboCalculator |
-| **TurboDeviceInfo** | Turbo | ✅ `DeviceInfoCore` | **Stateless** but used by ExpoStorage (cross-module) |
+| **ExpoLogger** | Expo | ✅ `ExpoLoggerCore` | Has **state** (`logCount`) + used by TurboCalculator via ModuleInterop |
 | **ExpoStorage** | Expo | ✅ `StorageCore` | Has **state** (`storage` map) |
-| **TurboCalculator** | Turbo | ❌ No Core | **Stateless** (just math) - direct implementation is fine |
+| **TurboCalculator** | Turbo | ❌ No Core | **Stateless** (just math), calls ModuleInterop for logging |
+| **TurboDeviceInfo** | Turbo | ❌ No Core | **Stateless** (uses native APIs directly), self-contained |
 | **ModuleInterop** | Facade | N/A | **Stateless facade** - delegates to Core classes |
 
 **For Production:**
-- ✅ **All stateful modules** use Core classes (Logger, Storage, Device Info)
-- ✅ **Stateless modules** use direct implementation (Calculator)
-- ✅ **ModuleInterop** remains a stateless facade
+- ✅ **All stateful modules** use Core classes (Logger, Storage, Analytics)
+- ✅ **Stateless modules** can use direct implementation (Calculator, DeviceInfo)
+- ✅ **ModuleInterop** remains a stateless facade that routes to Core classes
 
 ---
 
@@ -312,36 +307,95 @@ s.pod_target_xcconfig = {
 
 **Always declare dependencies in podspecs:**
 ```ruby
-# ExpoStorage.podspec
-s.dependency "ModuleInterop"  # Required for cross-module calls
-
-# ModuleInterop.podspec
+# ModuleInterop.podspec - declares what it uses
 s.dependency "ExpoLogger"     # Access to ExpoLoggerCore
-s.dependency "TurboDeviceInfo" # Access to DeviceInfoCore
+s.dependency "ExpoStorage"    # Access to StorageCore
 ```
 
-**Gradle dependency:**
+**Gradle dependencies:**
 ```gradle
+# module-interop/build.gradle - declares what it uses
 dependencies {
-    implementation project(':module-interop')
+    implementation project(':expo-logger')   # Access to ExpoLoggerCore
+    implementation project(':expo-storage')  # Access to StorageCore
+}
+
+# app/build.gradle - TurboModules need ModuleInterop
+dependencies {
+    implementation project(':module-interop')  # For TurboCalculator to call ExpoLogger
 }
 ```
 
-### **6. codegenConfig Placement**
+### **6. TurboModules: App-Level Implementation (Critical!)**
 
-**iOS needs it, Android doesn't for local modules:**
-```json
-{
-  "codegenConfig": {
-    "name": "TurboCalculatorSpec",
-    "type": "modules",
-    "jsSrcsDir": "src"
-  }
-}
-```
+**Following [official React Native docs](https://reactnative.dev/docs/turbo-native-modules-introduction?platforms=ios&android-language=kotlin):**
 
-- ✅ iOS: Uses codegen to generate protocol/spec headers
-- ⚠️ Android: Use legacy modules for local TurboModules to avoid CMake issues
+**✅ CORRECT: Implement TurboModules at app level**
+
+1. **Specs in `specs/` directory at app root:**
+   ```
+   specs/NativeTurboCalculator.ts
+   specs/NativeTurboDeviceInfo.ts
+   ```
+
+2. **`codegenConfig` in app's `package.json`:**
+   ```json
+   {
+     "codegenConfig": {
+       "name": "AppSpecs",
+       "type": "modules",
+       "jsSrcsDir": "specs",
+       "android": {
+         "javaPackageName": "com.newarchspike.specs"
+       },
+       "ios": {
+         "modulesProvider": {
+           "TurboCalculator": "RCTTurboCalculator",
+           "TurboDeviceInfo": "RCTTurboDeviceInfo"
+         }
+       }
+     }
+   }
+   ```
+
+3. **Kotlin implementation in `android/app/src/main/java/.../turbomodules/`:**
+   ```kotlin
+   // TurboCalculatorModule.kt - Extends generated spec
+   class TurboCalculatorModule(reactContext: ReactApplicationContext) : 
+       NativeTurboCalculatorSpec(reactContext) {
+       
+       override fun getName() = NAME
+       override fun add(a: Double, b: Double): Double = a + b
+   }
+   ```
+
+4. **iOS implementation in `ios/TurboModules/`:**
+   ```objc
+   // RCTTurboCalculator.mm
+   @interface RCTTurboCalculator : NSObject <NativeTurboCalculatorSpec>
+   - (NSNumber *)add:(double)a b:(double)b;
+   @end
+   ```
+
+5. **Register with `TurboReactPackage` in `MainApplication.kt`:**
+   ```kotlin
+   override fun getPackages(): List<ReactPackage> =
+       PackageList(this).packages.apply {
+           add(TurboCalculatorPackage())
+           add(TurboDeviceInfoPackage())
+       }
+   ```
+
+**Why app-level?**
+- ✅ No CMake/C++ complexity for local modules
+- ✅ Codegen works cleanly on both platforms
+- ✅ Follows official React Native pattern
+- ✅ Easier to maintain and test
+
+**❌ WRONG: Library modules with `codegenConfig`**
+- Creates CMake issues on Android
+- Requires C++/JSI implementation
+- Overcomplicated for simple modules
 
 ---
 
@@ -353,15 +407,15 @@ dependencies {
 ExpoLoggerCore.shared().logInfo(message)  // ✅ Direct, same pod
 ```
 
-### **Cross-Pod (Via ModuleInterop):**
+### **Cross-Module (Via ModuleInterop):**
 ```objc
-// TurboCalculator.mm → ExpoLogger
-[[ModuleInterop shared] incrementLogCount];  // ✅ Via facade
-    ↓
-ExpoLoggerCore.shared().logInfo()  // ModuleInterop delegates to Core
+// TurboCalculator.mm → ModuleInterop → ExpoLogger
+[[ModuleInterop shared] logInfo:@"TurboCalculator: 10 + 5 = 15"];  // ✅ Via facade
+    ↓ (ModuleInterop delegates)
+ExpoLoggerCore.shared().logInfo(@"...")  // Core owns state, increments count
 ```
 
-**The Core classes are ALWAYS native-to-native, regardless of architecture!**
+**This is 100% native-to-native bridgeless communication!**
 
 ---
 
@@ -410,7 +464,6 @@ fun onWebViewEvent(eventName: String, params: Map<String, Any>) {
 ### **5. Benefits You Get:**
 
 - ✅ **Bridgeless mode ready** - Native-to-native, no JS bridge
-- ✅ **Testable** - Core classes are pure native, unit test without RN
 - ✅ **Maintainable** - Clear separation: Wrapper → Core
 - ✅ **Backward compatible** - Works on old arch too
 - ✅ **Scalable** - Add new modules by adding new Core classes
@@ -424,7 +477,67 @@ This POC proves that:
 1. ✅ **TurboModules and Expo Modules can communicate natively** (bridgeless)
 2. ✅ **ModuleInterop is a clean facade** for cross-module calls
 3. ✅ **Core classes own state and logic** - not wrappers or interop
-4. ✅ **Works identically on iOS and Android**
-5. ✅ **Production-ready architecture** for your cg-webview migration
+4. ✅ **Works identically on iOS and Android** (proven with logs above)
+5. ✅ **Kotlin TurboModules work perfectly** (following official React Native docs)
+6. ✅ **Production-ready architecture** for your cg-webview migration
 
 **You can now confidently migrate your production app using this exact pattern!** 🎉
+
+---
+
+## 🤔 **Should cg-webview be a TurboModule or Expo Module?**
+
+Now that we've proven TurboModule ↔ Expo Module communication works, you have both options:
+
+### **Option A: cg-webview as Expo Module** ⭐ **Recommended**
+
+**Architecture:**
+```
+react-native-webview (TurboModule from npm)
+         ↓ nativeConfig
+    cg-webview (Expo Module wrapper)
+         ↓ uses
+    ModuleInterop → Firebase, AppsFlyer, etc. (Expo Modules)
+```
+
+**Pros:**
+- ✅ Simpler, cleaner code (Swift/Kotlin with Expo's DSL)
+- ✅ Easier to maintain
+- ✅ Better developer experience (no Codegen complexity)
+- ✅ Works perfectly with `nativeConfig` to inject into `react-native-webview`
+- ✅ Can call other Expo Modules via `ModuleInterop` ← **We proved this!**
+
+**Cons:**
+- None significant for this use case
+
+### **Option B: cg-webview as TurboModule + Fabric**
+
+**Architecture:**
+```
+react-native-webview (TurboModule from npm)
+         ↓ uses as component
+    cg-webview (TurboModule + Fabric)
+         ↓ uses
+    ModuleInterop → Firebase, AppsFlyer, etc. (Expo Modules)
+```
+
+**Pros:**
+- ✅ More aligned with `react-native-webview` architecture (both TurboModules)
+- ✅ Direct JSI access (potentially better performance)
+- ✅ Can still call Expo Modules via `ModuleInterop` ← **We proved this!**
+
+**Cons:**
+- ❌ More complex (Codegen specs, ObjC++, Fabric component setup)
+- ❌ Harder to maintain
+- ❌ More boilerplate
+
+### **Recommendation:**
+
+**Start with Option A (Expo Module)** because:
+1. **Communication works perfectly** - This POC proves TurboModules can call Expo Modules
+2. **Simpler maintenance** - Focus on business logic, not boilerplate
+3. **Faster iteration** - Expo's DSL is more ergonomic
+4. **Still production-ready** - Expo Modules are battle-tested
+5. **You can migrate later** - If needed, convert to TurboModule later
+
+**Key Insight:** The choice is based on **developer experience**, not technical limitations. `ModuleInterop` enables seamless communication regardless!

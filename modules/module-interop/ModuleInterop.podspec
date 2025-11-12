@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   s.dependency "ExpoLogger"
-  s.dependency "TurboDeviceInfo"
+  s.dependency "ExpoStorage"
   
   install_modules_dependencies(s)
 end

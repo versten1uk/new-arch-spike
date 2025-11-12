@@ -16,6 +16,5 @@ Pod::Spec.new do |s|
   s.public_header_files = "ios/StorageCore.h"
 
   s.dependency "ExpoModulesCore"
-  s.dependency "ModuleInterop"
 end
 

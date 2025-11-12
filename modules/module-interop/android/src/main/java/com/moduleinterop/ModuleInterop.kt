@@ -3,7 +3,7 @@ package com.moduleinterop
 import android.content.Context
 import android.util.Log
 import expo.modules.logger.ExpoLoggerCore
-import com.turbodeviceinfo.DeviceInfoCore
+import expo.modules.storage.StorageCore
 
 /**
  * Centralized Interop Layer for all module-to-module communication
@@ -23,10 +23,10 @@ class ModuleInterop private constructor(private val context: Context) {
     // LOGGER INTEROP (delegates to ExpoLoggerCore)
     // ========================================
     
-    fun incrementLogCount() {
+    fun logInfo(message: String) {
         // Delegate to ExpoLoggerCore (which owns the state)
-        ExpoLoggerCore.getInstance().logInfo("[ModuleInterop] Log triggered")
-        Log.d(TAG, "✅ [BRIDGELESS] ModuleInterop → ExpoLoggerCore: Delegated log call")
+        ExpoLoggerCore.getInstance().logInfo(message)
+        Log.d(TAG, "✅ [BRIDGELESS] ModuleInterop → ExpoLoggerCore: Logged '$message'")
     }
     
     fun getLogCount(): Int {
@@ -34,25 +34,25 @@ class ModuleInterop private constructor(private val context: Context) {
         return ExpoLoggerCore.getInstance().getLogCount()
     }
     
+    fun resetCount() {
+        // Delegate to ExpoLoggerCore (which owns the state)
+        ExpoLoggerCore.getInstance().resetCount()
+        Log.d(TAG, "✅ [BRIDGELESS] ModuleInterop → ExpoLoggerCore: Reset log count")
+    }
+    
     // ========================================
-    // DEVICE INFO INTEROP (delegates to DeviceInfoCore)
+    // STORAGE INTEROP (delegates to StorageCore)
     // ========================================
     
-    fun getDeviceModel(): String {
-        // Delegate to DeviceInfoCore (which owns the logic)
-        return DeviceInfoCore.getInstance(context).getDeviceModel()
+    fun setItem(key: String, value: String) {
+        // Delegate to StorageCore (which owns the state)
+        StorageCore.getInstance().setItem(key, value)
+        Log.d(TAG, "✅ [BRIDGELESS] ModuleInterop → StorageCore: Set '$key'='$value'")
     }
     
-    fun getDeviceName(): String {
-        return DeviceInfoCore.getInstance(context).getDeviceName()
-    }
-    
-    fun getSystemVersion(): String {
-        return DeviceInfoCore.getInstance(context).getSystemVersion()
-    }
-    
-    fun getBundleId(): String {
-        return DeviceInfoCore.getInstance(context).getBundleId()
+    fun getItem(key: String): String? {
+        // Delegate to StorageCore (which owns the state)
+        return StorageCore.getInstance().getItem(key)
     }
     
     // ========================================

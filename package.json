@@ -9,6 +9,20 @@
     "start": "react-native start",
     "test": "jest"
   },
+  "codegenConfig": {
+    "name": "AppSpecs",
+    "type": "modules",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "com.newarchspike.specs"
+    },
+    "ios": {
+      "modulesProvider": {
+        "TurboCalculator": "RCTTurboCalculator",
+        "TurboDeviceInfo": "RCTTurboDeviceInfo"
+      }
+    }
+  },
   "dependencies": {
     "expo": "~52.0.0",
     "expo-logger": "file:./modules/expo-logger",
@@ -16,9 +30,7 @@
     "expo-storage": "file:./modules/expo-storage",
     "module-interop": "file:./modules/module-interop",
     "react": "18.3.1",
-    "react-native": "0.77.2",
-    "turbo-calculator": "file:./modules/turbo-calculator",
-    "turbo-deviceinfo": "file:./modules/turbo-deviceinfo"
+    "react-native": "0.77.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

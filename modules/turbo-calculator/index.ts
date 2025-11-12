@@ -1,4 +1,5 @@
-import NativeCalculator from './src/NativeTurboCalculator';
+// Import from app-level specs (following official docs pattern)
+import NativeCalculator from '../../specs/NativeTurboCalculator';
 
 export const TurboCalculator = {
   add: (a: number, b: number): number => {

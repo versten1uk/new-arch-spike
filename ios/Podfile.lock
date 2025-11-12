@@ -41,7 +41,6 @@ PODS:
     - Yoga
   - ExpoStorage (1.0.0):
     - ExpoModulesCore
-    - ModuleInterop
   - fast_float (6.1.4)
   - FBLazyVector (0.77.2)
   - fmt (11.0.2)
@@ -52,6 +51,7 @@ PODS:
   - ModuleInterop (1.0.0):
     - DoubleConversion
     - ExpoLogger
+    - ExpoStorage
     - glog
     - hermes-engine
     - RCT-Folly (= 2024.11.18.00)
@@ -70,7 +70,6 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - TurboDeviceInfo
     - Yoga
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -111,7 +110,6 @@ PODS:
     - React-RCTText (= 0.77.2)
     - React-RCTVibration (= 0.77.2)
   - React-callinvoker (0.77.2)
-  - React-Codegen (0.1.0)
   - React-Core (0.77.2):
     - glog
     - hermes-engine
@@ -1565,51 +1563,6 @@ PODS:
     - React-perflogger (= 0.77.2)
     - React-utils (= 0.77.2)
   - SocketRocket (0.7.1)
-  - TurboCalculator (1.0.0):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - ModuleInterop
-    - RCT-Folly (= 2024.11.18.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Codegen
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
-  - TurboDeviceInfo (1.0.0):
-    - DoubleConversion
-    - glog
-    - hermes-engine
-    - RCT-Folly (= 2024.11.18.00)
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Codegen
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - Yoga
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1690,13 +1643,10 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - TurboCalculator (from `../node_modules/turbo-calculator`)
-  - TurboDeviceInfo (from `../node_modules/turbo-deviceinfo`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
-    - React-Codegen
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -1851,10 +1801,6 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  TurboCalculator:
-    :path: "../node_modules/turbo-calculator"
-  TurboDeviceInfo:
-    :path: "../node_modules/turbo-deviceinfo"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1869,20 +1815,19 @@ SPEC CHECKSUMS:
   ExpoKeepAwake: b0171a73665bfcefcfcc311742a72a956e6aa680
   ExpoLogger: dbba09778ba2d71d9cd2cc4b5f29318af8206446
   ExpoModulesCore: 5f742a35aa7861bb7d9cde9a2f64ef62032355f5
-  ExpoStorage: 54206377fdf237b47e63e0e7f44af07cc27cd1d3
+  ExpoStorage: 895a10b359bd761ae4122f2c7f17809213403d64
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 4c16dde959a9d6b24f2aa32cb87cb919a1ace3f3
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
   hermes-engine: 8eb265241fa1d7095d3a40d51fd90f7dce68217c
-  ModuleInterop: 370a16230cd321bd2a674874031d41a1f6038a0f
+  ModuleInterop: bab91e1a7049e0e3ed099af397c959fed0689475
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: 85b72250b63cfb54f29ca96ceb108cb9ef3c2079
   RCTRequired: 567cb8f5d42b990331bfd93faad1d8999b1c1736
   RCTTypeSafety: 5e57924492a5e0a762654f814dd018953274eca9
   React: 53c9bd6f974c5dd019ee466e46477eb679149c38
   React-callinvoker: d6484472c1c742917b51338525336d6a74ab8a9f
-  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: 4ddb741e08144902ce4e0e66b7c67c6f2dc5bfc7
   React-CoreModules: 0a31ca662ac169edd0c210efd324e19b3012d7ed
   React-cxxreact: f8ecc64ebf8b795c550ae8b65ba4908ffe7350d0
@@ -1933,13 +1878,11 @@ SPEC CHECKSUMS:
   React-timing: d9adb125887c734222f455da146e2ff1a7b2b9c1
   React-utils: 5642285f8379e4d024f1f158ffcc77d9c52c877c
   ReactAppDependencyProvider: f334cebc0beed0a72490492e978007082c03d533
-  ReactCodegen: 6f764a42662ad6379fd3fbb9c09baff6e4797b20
+  ReactCodegen: b0af3e21aa1be7c4f625f52efe09e6fd1e9e8a09
   ReactCommon: 7763e59534d58e15f8f22121cdfe319040e08888
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
-  TurboCalculator: 49d98924cf7b70447b292fdd85c33b6477882579
-  TurboDeviceInfo: e9296575b93564c38da461ae701b83625f75dc24
   Yoga: 31a098f74c16780569aebd614a0f37a907de0189
 
-PODFILE CHECKSUM: 90f62c75a3a9bc6fc72d183fcfc94976b277aa97
+PODFILE CHECKSUM: 5894877ee6adb4da7c08a16d217b5e8c1a9f7886
 
 COCOAPODS: 1.16.2

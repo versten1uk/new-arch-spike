@@ -1,7 +1,6 @@
 package expo.modules.storage
 
 import android.util.Log
-import com.moduleinterop.ModuleInterop
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -23,24 +22,9 @@ class ExpoStorageModule : Module() {
 
         AsyncFunction("setItem") { key: String, value: String ->
             Log.d(TAG, "🔵 [ExpoStorageModule] setItem called with key='$key' value='$value'")
-
-            // BRIDGELESS NATIVE-TO-NATIVE CALL: Expo Module → ModuleInterop (NO REFLECTION!)
-            val deviceModel = try {
-                val interop = ModuleInterop.getInstance(appContext.reactContext!!)
-                val model = interop.getDeviceModel()
-                Log.d(TAG, "✅ [BRIDGELESS] ExpoStorage → ModuleInterop: Got '$model'")
-                model
-            } catch (e: Exception) {
-                Log.e(TAG, "❌ [ExpoStorage] Failed to call ModuleInterop: ${e.message}")
-                e.printStackTrace()
-                "unknown"
-            }
-
-            // Store value WITH device model appended to prove the call worked
-            val enrichedValue = "$value [Device: $deviceModel]"
             
             // Delegate to Core (which owns the state)
-            StorageCore.getInstance().setItem(key, enrichedValue)
+            StorageCore.getInstance().setItem(key, value)
         }
 
         AsyncFunction("getItem") { key: String ->

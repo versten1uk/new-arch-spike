@@ -1,6 +1,5 @@
 import ExpoModulesCore
 import Foundation
-import ModuleInterop
 
 /**
  * ExpoStorageModule - Thin Expo Module wrapper
@@ -21,15 +20,8 @@ public class ExpoStorageModule: Module {
         AsyncFunction("setItem") { (key: String, value: String) in
             print("🔵 [ExpoStorageModule] setItem called with key='\(key)' value='\(value)'")
             
-            // BRIDGELESS NATIVE-TO-NATIVE CALL: Expo Module → ModuleInterop (NO REFLECTION!)
-            let deviceModel = ModuleInterop.shared().getDeviceModel()
-            print("✅ [BRIDGELESS] ExpoStorage → ModuleInterop: Got '\(deviceModel)'")
-            
-            // Store value WITH device model appended to prove the call worked
-            let enrichedValue = "\(value) [Device: \(deviceModel)]"
-            
             // Delegate to Core (which owns the state)
-            StorageCore.shared().setItem(key, value: enrichedValue)
+            StorageCore.shared().setItem(key, value: value)
         }
         
         AsyncFunction("getItem") { (key: String) -> String? in

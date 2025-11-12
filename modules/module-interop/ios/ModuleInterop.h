@@ -18,17 +18,16 @@
 // LOGGER INTEROP (from ExpoLogger)
 // ========================================
 
-- (void)incrementLogCount;
+- (void)logInfo:(NSString *)message;
 - (int)getLogCount;
+- (void)resetCount;
 
 // ========================================
-// DEVICE INFO INTEROP (from TurboDeviceInfo)
+// STORAGE INTEROP (from ExpoStorage)
 // ========================================
 
-- (NSString *)getDeviceModel;
-- (NSString *)getDeviceName;
-- (NSString *)getSystemVersion;
-- (NSString *)getBundleId;
+- (void)setItem:(NSString *)key value:(NSString *)value;
+- (NSString *)getItem:(NSString *)key;
 
 @end
 

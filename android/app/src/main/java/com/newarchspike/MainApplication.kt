@@ -11,8 +11,8 @@ import com.facebook.react.defaults.DefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
-import com.turbocalculator.TurboCalculatorPackage
-import com.turbodeviceinfo.TurboDeviceInfoPackage
+import com.newarchspike.turbomodules.TurboCalculatorPackage
+import com.newarchspike.turbomodules.TurboDeviceInfoPackage
 
 class MainApplication : Application(), ReactApplication {
 

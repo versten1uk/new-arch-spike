@@ -1,6 +1,6 @@
 #import "ModuleInterop.h"
 #import <ExpoLogger/ExpoLoggerCore.h>
-#import <TurboDeviceInfo/DeviceInfoCore.h>
+#import <ExpoStorage/StorageCore.h>
 #import <React/RCTLog.h>
 
 @implementation ModuleInterop
@@ -19,10 +19,10 @@
 // LOGGER INTEROP (delegates to ExpoLoggerCore)
 // ========================================
 
-- (void)incrementLogCount {
+- (void)logInfo:(NSString *)message {
     // Delegate to ExpoLoggerCore (which owns the state)
-    [[ExpoLoggerCore shared] logInfo:@"[ModuleInterop] Log triggered"];
-    NSLog(@"✅ [BRIDGELESS] ModuleInterop → ExpoLoggerCore: Delegated log call");
+    [[ExpoLoggerCore shared] logInfo:message];
+    NSLog(@"✅ [BRIDGELESS] ModuleInterop → ExpoLoggerCore: Logged '%@'", message);
 }
 
 - (int)getLogCount {
@@ -30,25 +30,25 @@
     return [[ExpoLoggerCore shared] getLogCount];
 }
 
+- (void)resetCount {
+    // Delegate to ExpoLoggerCore (which owns the state)
+    [[ExpoLoggerCore shared] resetCount];
+    NSLog(@"✅ [BRIDGELESS] ModuleInterop → ExpoLoggerCore: Reset log count");
+}
+
 // ========================================
-// DEVICE INFO INTEROP (delegates to DeviceInfoCore)
+// STORAGE INTEROP (delegates to StorageCore)
 // ========================================
 
-- (NSString *)getDeviceModel {
-    // Delegate to DeviceInfoCore (which owns the logic)
-    return [[DeviceInfoCore shared] getDeviceModel];
+- (void)setItem:(NSString *)key value:(NSString *)value {
+    // Delegate to StorageCore (which owns the state)
+    [[StorageCore shared] setItem:key value:value];
+    NSLog(@"✅ [BRIDGELESS] ModuleInterop → StorageCore: Set '%@'='%@'", key, value);
 }
 
-- (NSString *)getDeviceName {
-    return [[DeviceInfoCore shared] getDeviceName];
-}
-
-- (NSString *)getSystemVersion {
-    return [[DeviceInfoCore shared] getSystemVersion];
-}
-
-- (NSString *)getBundleId {
-    return [[DeviceInfoCore shared] getBundleId];
+- (NSString *)getItem:(NSString *)key {
+    // Delegate to StorageCore (which owns the state)
+    return [[StorageCore shared] getItem:key];
 }
 
 @end

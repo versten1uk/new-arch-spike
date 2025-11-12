@@ -1,4 +1,5 @@
-import NativeDeviceInfo from './src/NativeTurboDeviceInfo';
+// Import from app-level specs (following official docs pattern)
+import NativeDeviceInfo from '../../specs/NativeTurboDeviceInfo';
 
 export const TurboDeviceInfo = {
   getDeviceName: (): string => {
