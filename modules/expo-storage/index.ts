@@ -5,22 +5,16 @@ let ExpoStorageModule = null;
 try {
   ExpoStorageModule = requireNativeModule('ExpoStorage');
 } catch (e) {
-  console.log('[ExpoStorage] requireNativeModule failed, trying NativeModules:', e);
   ExpoStorageModule = NativeModules.ExpoStorage;
 }
 
 if (!ExpoStorageModule) {
-  const availableModules = Object.keys(NativeModules);
-  console.error('[ExpoStorage] Module not found!');
-  console.error('[ExpoStorage] Total modules available:', availableModules.length);
-  console.error('[ExpoStorage] Available modules:', JSON.stringify(availableModules, null, 2));
-  
   // Provide stub implementation to prevent crashes
   ExpoStorageModule = {
-    setItem: async () => { console.warn('[ExpoStorage] Module not loaded'); },
-    getItem: async () => { console.warn('[ExpoStorage] Module not loaded'); return null; },
-    removeItem: async () => { console.warn('[ExpoStorage] Module not loaded'); },
-    getAllKeys: async () => { console.warn('[ExpoStorage] Module not loaded'); return []; },
+    setItem: async () => {},
+    getItem: async () => { return null; },
+    removeItem: async () => {},
+    getAllKeys: async () => { return []; },
   };
 }
 

@@ -1,6 +1,5 @@
 package expo.modules.logger
 
-import android.util.Log
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -20,34 +19,23 @@ class ExpoLoggerModule : Module() {
         Name("ExpoLogger")
 
         AsyncFunction("logInfo") { message: String ->
-            // Delegate to Core (which owns the logic and state)
             ExpoLoggerCore.getInstance().logInfo(message)
         }
 
         AsyncFunction("logWarning") { message: String ->
-            // Delegate to Core (which owns the logic and state)
             ExpoLoggerCore.getInstance().logWarning(message)
         }
 
         AsyncFunction("logError") { message: String ->
-            // Delegate to Core (which owns the logic and state)
             ExpoLoggerCore.getInstance().logError(message)
         }
 
         AsyncFunction("getLogCount") {
-            // Delegate to Core (which owns the state)
-            val count = ExpoLoggerCore.getInstance().getLogCount()
-            Log.d(TAG, "📊 [ExpoLoggerModule] getLogCount() = $count (from Core)")
-            count
+            ExpoLoggerCore.getInstance().getLogCount()
         }
         
         AsyncFunction("resetLogCount") {
-            // Reset count (useful for development/testing)
             ExpoLoggerCore.getInstance().resetCount()
         }
-    }
-
-    companion object {
-        private const val TAG = "ExpoLoggerModule"
     }
 }

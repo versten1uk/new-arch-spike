@@ -18,7 +18,6 @@
 - (instancetype)init {
     if (self = [super init]) {
         _storage = [NSMutableDictionary dictionary];
-        NSLog(@"🚀 [StorageCore] Initialized (Pure native, no RN dependencies)");
     }
     return self;
 }
@@ -28,7 +27,6 @@
 // ========================================
 
 - (void)setItem:(NSString *)key value:(NSString *)value {
-    NSLog(@"📦 [StorageCore] setItem: '%@' = '%@'", key, value);
     self.storage[key] = value;
 }
 
@@ -46,7 +44,6 @@
 
 - (void)clear {
     [self.storage removeAllObjects];
-    NSLog(@"🔄 [StorageCore] Storage cleared");
 }
 
 @end

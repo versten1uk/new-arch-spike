@@ -5,20 +5,17 @@ let ExpoLoggerModule = null;
 try {
   ExpoLoggerModule = requireNativeModule('ExpoLogger');
 } catch (e) {
-  console.log('[ExpoLogger] requireNativeModule failed, trying NativeModules:', e);
   ExpoLoggerModule = NativeModules.ExpoLogger;
 }
 
 if (!ExpoLoggerModule) {
-  console.error('[ExpoLogger] Module not found! Available modules:', Object.keys(NativeModules));
-  
   // Provide stub implementation to prevent crashes
   ExpoLoggerModule = {
-    logInfo: async () => { console.log('[ExpoLogger] Stub - module not loaded'); },
-    logWarning: async () => { console.warn('[ExpoLogger] Stub - module not loaded'); },
-    logError: async () => { console.error('[ExpoLogger] Stub - module not loaded'); },
+    logInfo: async () => {},
+    logWarning: async () => {},
+    logError: async () => {},
     getLogCount: async () => { return 0; },
-    resetLogCount: async () => { console.log('[ExpoLogger] Stub - reset not available'); },
+    resetLogCount: async () => {},
   };
 }
 

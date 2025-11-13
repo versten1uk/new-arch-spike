@@ -18,9 +18,6 @@ public class ExpoStorageModule: Module {
         Name("ExpoStorage")
         
         AsyncFunction("setItem") { (key: String, value: String) in
-            print("🔵 [ExpoStorageModule] setItem called with key='\(key)' value='\(value)'")
-            
-            // Delegate to Core (which owns the state)
             StorageCore.shared().setItem(key, value: value)
         }
         

@@ -21,7 +21,6 @@
     if (self = [super init]) {
         _logCount = 0;
         _logger = os_log_create("com.newarchspike", "ExpoLogger");
-        NSLog(@"🚀 [ExpoLoggerCore] Initialized (Pure native, no RN dependencies)");
     }
     return self;
 }
@@ -29,7 +28,6 @@
 // Manual reset for development/testing
 - (void)resetCount {
     _logCount = 0;
-    NSLog(@"🔄 [ExpoLoggerCore] Count reset to 0");
 }
 
 // ========================================
@@ -39,19 +37,16 @@
 - (void)logInfo:(NSString *)message {
     os_log_with_type(self.logger, OS_LOG_TYPE_INFO, "%{public}@", message);
     self.logCount++;
-    NSLog(@"✅ [ExpoLoggerCore] Info logged, count now: %d", self.logCount);
 }
 
 - (void)logWarning:(NSString *)message {
     os_log_with_type(self.logger, OS_LOG_TYPE_DEFAULT, "%{public}@", message);
     self.logCount++;
-    NSLog(@"⚠️ [ExpoLoggerCore] Warning logged, count now: %d", self.logCount);
 }
 
 - (void)logError:(NSString *)message {
     os_log_with_type(self.logger, OS_LOG_TYPE_ERROR, "%{public}@", message);
     self.logCount++;
-    NSLog(@"❌ [ExpoLoggerCore] Error logged, count now: %d", self.logCount);
 }
 
 // ========================================

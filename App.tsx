@@ -9,8 +9,8 @@ import {
   View,
   Platform,
 } from 'react-native';
-import TurboCalculator from './modules/turbo-calculator';
-import TurboDeviceInfo from './modules/turbo-deviceinfo';
+import TurboCalculator from './specs/NativeTurboCalculator';
+import TurboDeviceInfo from './specs/NativeTurboDeviceInfo';
 import ExpoStorage from './modules/expo-storage';
 import ExpoLogger from './modules/expo-logger';
 
@@ -26,9 +26,8 @@ function App(): React.JSX.Element {
       try {
         const count = await ExpoLogger.getLogCount();
         setLogCount(count);
-        console.log('📊 [App] Initialized log count from native:', count);
       } catch (error) {
-        console.error('Failed to get initial log count:', error);
+        // Failed to get initial log count
       }
     };
     initLogCount();
@@ -45,7 +44,6 @@ function App(): React.JSX.Element {
         setLogCount(count);
       }, 100);
     } catch (error) {
-      console.error('TurboCalculator error:', error);
       setCalcResult('Error: Module not found');
     }
   };
@@ -55,7 +53,6 @@ function App(): React.JSX.Element {
       const model = TurboDeviceInfo.getDeviceModel();
       setDeviceInfo(`Device: ${model}`);
     } catch (error) {
-      console.error('TurboDeviceInfo error:', error);
       setDeviceInfo('Error: Module not found');
     }
   };
@@ -66,7 +63,6 @@ function App(): React.JSX.Element {
       const value = await ExpoStorage.getItem('test-key');
       setStorageResult(`Retrieved: ${value}`);
     } catch (error) {
-      console.error('ExpoStorage error:', error);
       setStorageResult('Error: Module not found');
     }
   };
@@ -77,7 +73,7 @@ function App(): React.JSX.Element {
       const count = await ExpoLogger.getLogCount();
       setLogCount(count);
     } catch (error) {
-      console.error('ExpoLogger error:', error);
+      // ExpoLogger error
     }
   };
 
@@ -87,7 +83,7 @@ function App(): React.JSX.Element {
       const count = await ExpoLogger.getLogCount();
       setLogCount(count);
     } catch (error) {
-      console.error('ExpoLogger reset error:', error);
+      // ExpoLogger reset error
     }
   };
 

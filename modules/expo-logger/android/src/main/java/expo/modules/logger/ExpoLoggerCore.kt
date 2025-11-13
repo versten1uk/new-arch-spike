@@ -15,14 +15,9 @@ class ExpoLoggerCore private constructor() {
     
     private var logCount: Int = 0
     
-    init {
-        Log.d(TAG, "🚀 [ExpoLoggerCore] Initialized (Pure native, no RN dependencies)")
-    }
-    
     // Reset count (useful for development when app reloads)
     fun resetCount() {
         logCount = 0
-        Log.d(TAG, "🔄 [ExpoLoggerCore] Count reset to 0")
     }
     
     // ========================================
@@ -32,19 +27,16 @@ class ExpoLoggerCore private constructor() {
     fun logInfo(message: String) {
         Log.i(TAG, message)
         logCount++
-        Log.d(TAG, "✅ [ExpoLoggerCore] Info logged, count now: $logCount")
     }
     
     fun logWarning(message: String) {
         Log.w(TAG, message)
         logCount++
-        Log.d(TAG, "⚠️ [ExpoLoggerCore] Warning logged, count now: $logCount")
     }
     
     fun logError(message: String) {
         Log.e(TAG, message)
         logCount++
-        Log.d(TAG, "❌ [ExpoLoggerCore] Error logged, count now: $logCount")
     }
     
     // ========================================

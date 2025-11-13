@@ -32,9 +32,7 @@ public class ExpoLoggerModule: Module {
         }
         
         AsyncFunction("getLogCount") { () -> Int in
-            // Delegate to Core (which owns the state)
             let count = ExpoLoggerCore.shared().getLogCount()
-            print("📊 [ExpoLoggerModule] getLogCount() = \(count) (from Core)")
             return Int(count)
         }
         

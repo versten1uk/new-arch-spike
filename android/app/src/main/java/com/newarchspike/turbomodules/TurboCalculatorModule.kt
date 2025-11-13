@@ -1,6 +1,5 @@
 package com.newarchspike.turbomodules
 
-import android.util.Log
 import com.facebook.react.bridge.ReactApplicationContext
 import com.moduleinterop.ModuleInterop
 import com.newarchspike.specs.NativeTurboCalculatorSpec
@@ -18,16 +17,13 @@ class TurboCalculatorModule(reactContext: ReactApplicationContext) :
 
     override fun add(a: Double, b: Double): Double {
         val result = a + b
-        Log.d(TAG, "🔵 [TurboCalculator] add called: $a + $b = $result")
 
         // BRIDGELESS NATIVE-TO-NATIVE CALL: TurboModule → ModuleInterop → ExpoLogger
         try {
             val interop = ModuleInterop.getInstance(reactApplicationContext)
             interop.logInfo("TurboCalculator: $a + $b = $result")
-            Log.d(TAG, "✅ [BRIDGELESS] TurboCalculator → ModuleInterop → ExpoLogger")
         } catch (e: Exception) {
-            Log.e(TAG, "❌ [TurboCalculator] Failed to call ModuleInterop: ${e.message}")
-            e.printStackTrace()
+            // Failed to call ModuleInterop
         }
 
         return result
@@ -43,7 +39,6 @@ class TurboCalculatorModule(reactContext: ReactApplicationContext) :
 
     override fun divide(a: Double, b: Double): Double {
         if (b == 0.0) {
-            Log.e(TAG, "❌ [TurboCalculator] Division by zero")
             return 0.0
         }
         return a / b
@@ -51,7 +46,6 @@ class TurboCalculatorModule(reactContext: ReactApplicationContext) :
 
     companion object {
         const val NAME = "TurboCalculator"
-        private const val TAG = "TurboCalculator"
     }
 }
 

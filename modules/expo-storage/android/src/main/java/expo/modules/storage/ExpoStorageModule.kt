@@ -1,6 +1,5 @@
 package expo.modules.storage
 
-import android.util.Log
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -21,29 +20,19 @@ class ExpoStorageModule : Module() {
         Name("ExpoStorage")
 
         AsyncFunction("setItem") { key: String, value: String ->
-            Log.d(TAG, "🔵 [ExpoStorageModule] setItem called with key='$key' value='$value'")
-            
-            // Delegate to Core (which owns the state)
             StorageCore.getInstance().setItem(key, value)
         }
 
         AsyncFunction("getItem") { key: String ->
-            // Delegate to Core (which owns the state)
             StorageCore.getInstance().getItem(key)
         }
 
         AsyncFunction("removeItem") { key: String ->
-            // Delegate to Core (which owns the state)
             StorageCore.getInstance().removeItem(key)
         }
 
         AsyncFunction("getAllKeys") {
-            // Delegate to Core (which owns the state)
             StorageCore.getInstance().getAllKeys()
         }
-    }
-
-    companion object {
-        private const val TAG = "ExpoStorage"
     }
 }

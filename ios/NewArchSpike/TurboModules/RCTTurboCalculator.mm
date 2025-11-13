@@ -3,7 +3,6 @@
 
 #import "RCTTurboCalculator.h"
 #import <ModuleInterop/ModuleInterop.h>
-#import <React/RCTLog.h>
 
 @implementation RCTTurboCalculator
 
@@ -13,11 +12,9 @@
 
 - (NSNumber *)add:(double)a b:(double)b {
     double result = a + b;
-    RCTLogInfo(@"🔵 [TurboCalculator] add called: %.0f + %.0f = %.0f", a, b, result);
     
     // BRIDGELESS NATIVE-TO-NATIVE CALL: TurboModule → ModuleInterop → ExpoLogger
     [[ModuleInterop shared] logInfo:[NSString stringWithFormat:@"TurboCalculator: %.0f + %.0f = %.0f", a, b, result]];
-    RCTLogInfo(@"✅ [BRIDGELESS] TurboCalculator → ModuleInterop → ExpoLogger");
     
     return @(result);
 }
@@ -32,7 +29,6 @@
 
 - (NSNumber *)divide:(double)a b:(double)b {
     if (b == 0) {
-        RCTLogWarn(@"❌ [TurboCalculator] Division by zero");
         return @(0);
     }
     return @(a / b);

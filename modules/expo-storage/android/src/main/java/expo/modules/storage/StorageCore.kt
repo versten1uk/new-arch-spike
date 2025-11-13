@@ -1,7 +1,5 @@
 package expo.modules.storage
 
-import android.util.Log
-
 /**
  * StorageCore - Pure native business logic (NO React Native dependencies)
  * 
@@ -15,16 +13,11 @@ class StorageCore private constructor() {
     
     private val storage = mutableMapOf<String, String>()
     
-    init {
-        Log.d(TAG, "🚀 [StorageCore] Initialized (Pure native, no RN dependencies)")
-    }
-    
     // ========================================
     // BUSINESS LOGIC
     // ========================================
     
     fun setItem(key: String, value: String) {
-        Log.d(TAG, "📦 [StorageCore] setItem: '$key' = '$value'")
         storage[key] = value
     }
     
@@ -42,12 +35,9 @@ class StorageCore private constructor() {
     
     fun clear() {
         storage.clear()
-        Log.d(TAG, "🔄 [StorageCore] Storage cleared")
     }
     
     companion object {
-        private const val TAG = "StorageCore"
-        
         @Volatile
         private var instance: StorageCore? = null
         

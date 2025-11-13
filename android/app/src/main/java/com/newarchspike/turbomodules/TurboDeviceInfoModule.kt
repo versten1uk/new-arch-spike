@@ -1,7 +1,6 @@
 package com.newarchspike.turbomodules
 
 import android.os.Build
-import android.util.Log
 import com.facebook.react.bridge.ReactApplicationContext
 import com.newarchspike.specs.NativeTurboDeviceInfoSpec
 
@@ -19,10 +18,7 @@ class TurboDeviceInfoModule(reactContext: ReactApplicationContext) :
     override fun getName() = NAME
 
     override fun getDeviceModel(): String {
-        // Implement directly using Android APIs (TurboModules should be self-contained)
-        val model = "${Build.MANUFACTURER} ${Build.MODEL}"
-        Log.d(TAG, "🔵 [TurboDeviceInfo] getDeviceModel() = $model")
-        return model
+        return "${Build.MANUFACTURER} ${Build.MODEL}"
     }
 
     override fun getDeviceName(): String {
@@ -39,7 +35,6 @@ class TurboDeviceInfoModule(reactContext: ReactApplicationContext) :
 
     companion object {
         const val NAME = "TurboDeviceInfo"
-        private const val TAG = "TurboDeviceInfo"
     }
 }
 

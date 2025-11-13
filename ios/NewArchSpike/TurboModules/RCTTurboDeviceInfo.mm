@@ -3,7 +3,6 @@
 
 #import "RCTTurboDeviceInfo.h"
 #import <UIKit/UIKit.h>
-#import <React/RCTLog.h>
 
 @implementation RCTTurboDeviceInfo
 
@@ -12,10 +11,7 @@
 }
 
 - (NSString *)getDeviceModel {
-    // Implement directly using iOS APIs (TurboModules should be self-contained)
-    NSString *model = [[UIDevice currentDevice] model];
-    RCTLogInfo(@"🔵 [TurboDeviceInfo] getDeviceModel() = %@", model);
-    return model;
+    return [[UIDevice currentDevice] model];
 }
 
 - (NSString *)getDeviceName {
