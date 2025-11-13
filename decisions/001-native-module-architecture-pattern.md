@@ -6,7 +6,7 @@
 
 ## Context
 
-As we migrate our mobile application to React Native's New Architecture (0.77+) with bridgeless mode enabled, we need to establish a clear, production-ready pattern for building and integrating native modules. Our application has multiple native modules (Firebase, AppsFlyer, Snowplow, `cg-webview`) that need to communicate with each other without relying on the JavaScript bridge.
+As we migrate our mobile application to React Native's New Architecture (0.77+) with bridgeless mode enabled, we need to establish a clear pattern for building and integrating native modules. Our application has multiple native modules (Firebase, AppsFlyer, Snowplow, CGWebView) that need to communicate with each other without relying on the JavaScript bridge.
 
 **Key Problems:**
 
@@ -41,6 +41,7 @@ We will adopt a **Three-Layer Architecture Pattern** for all native modules:
 ### Layer 2: Module Wrappers (Thin Adapters)
 - **Purpose**: Exposes Core classes to JavaScript
 - **Pattern**: Thin wrapper that delegates ALL calls to Core
+- **Naming**: `[ModuleName]Module` (e.g., `ExpoLoggerModule`, `AppsFlyerModule`)
 - **Types**:
   - **Expo Modules** (Swift/Kotlin DSL) - Recommended for analytics, storage, logging
   - **TurboModules** (Codegen + JSI) - For performance-critical modules or npm packages
@@ -81,24 +82,7 @@ Convert all native modules to TurboModules with C++ JSI implementation.
 
 **Reason for not choosing:** Too complex for non-performance-critical modules. Most analytics, logging, and storage modules don't need direct JSI access and would suffer from increased maintenance burden.
 
-### Option B: Use Reflection for Cross-Module Communication (Android)
-
-Use Android's `ReactContext.getNativeModule()` with reflection to discover modules at runtime.
-
-**Pros:**
-- Minimal boilerplate
-- Easy to implement
-
-**Cons:**
-- Performance overhead on every call
-- No compile-time safety
-- Breaks with code obfuscation (ProGuard/R8)
-- Poor readability and maintainability
-- Different pattern on iOS vs Android
-
-**Reason for not choosing:** Bad practice for production. Reflection is slow, breaks with obfuscation, and provides no compile-time guarantees. Not acceptable for a production-grade architecture.
-
-### Option C: Three-Layer Architecture (Core + Wrapper + Interop) - **SELECTED**
+### Option B: Three-Layer Architecture (Core + Wrapper + Interop) - **SELECTED**
 
 Separate concerns into Core classes (state/logic), thin wrappers (RN adapters), and ModuleInterop (stateless facade).
 
@@ -116,7 +100,7 @@ Separate concerns into Core classes (state/logic), thin wrappers (RN adapters), 
 - More files per module (Core + Wrapper + Interop references)
 - Learning curve for team
 
-### Option D: Expo Modules Only
+### Option C: Expo Modules Only
 
 Convert all modules to Expo Modules, including `cg-webview`.
 
