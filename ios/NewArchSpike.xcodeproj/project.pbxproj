@@ -13,7 +13,6 @@
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		B02425A00E502D2EB0A0A9B4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		B7E625282EC1E95D004FD76C /* TurboModulesLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = B7E625272EC1E95D004FD76C /* TurboModulesLoader.mm */; };
 		B7E6252F2EC4C50C004FD76C /* RCTTurboCalculator.mm in Sources */ = {isa = PBXBuildFile; fileRef = B7E6252C2EC4C50C004FD76C /* RCTTurboCalculator.mm */; };
 		B7E625302EC4C50C004FD76C /* RCTTurboDeviceInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = B7E6252E2EC4C50C004FD76C /* RCTTurboDeviceInfo.mm */; };
 /* End PBXBuildFile section */
@@ -29,7 +28,6 @@
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = NewArchSpike/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = NewArchSpike/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		98409B7C6AFFC4A5A55721E9 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-NewArchSpike/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		B7E625272EC1E95D004FD76C /* TurboModulesLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TurboModulesLoader.mm; path = NewArchSpike/TurboModulesLoader.mm; sourceTree = "<group>"; };
 		B7E625292EC1E979004FD76C /* NewArchSpike-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NewArchSpike-Bridging-Header.h"; sourceTree = "<group>"; };
 		B7E6252B2EC4C50C004FD76C /* RCTTurboCalculator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTTurboCalculator.h; sourceTree = "<group>"; };
 		B7E6252C2EC4C50C004FD76C /* RCTTurboCalculator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTTurboCalculator.mm; sourceTree = "<group>"; };
@@ -98,7 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				B7E6252A2EC4C4A1004FD76C /* TurboModules */,
-				B7E625272EC1E95D004FD76C /* TurboModulesLoader.mm */,
 				13B07FAE1A68108700A75B9A /* NewArchSpike */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -331,7 +328,6 @@
 				61581EA2EAEBCA56B69F88D5 /* ExpoModulesProvider.swift in Sources */,
 				B7E6252F2EC4C50C004FD76C /* RCTTurboCalculator.mm in Sources */,
 				B7E625302EC4C50C004FD76C /* RCTTurboDeviceInfo.mm in Sources */,
-				B7E625282EC1E95D004FD76C /* TurboModulesLoader.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
