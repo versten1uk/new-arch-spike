@@ -1,6 +1,6 @@
 import UIKit
-import React_RCTAppDelegate
 import ExpoModulesCore
+import React_RCTAppDelegate
 
 @main
 class AppDelegate: RCTAppDelegate {
@@ -11,14 +11,6 @@ class AppDelegate: RCTAppDelegate {
   ) -> Bool {
     self.moduleName = "NewArchSpike"
     self.initialProps = [:]
-    
-    // Log Expo modules being loaded
-    let provider = ExpoModulesProvider()
-    let moduleClasses = provider.getModuleClasses()
-    print("🔥 [EXPO] Loading \(moduleClasses.count) Expo modules:")
-    for moduleClass in moduleClasses {
-      print("🔥 [EXPO] - \(String(describing: moduleClass))")
-    }
     
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -31,3 +23,4 @@ class AppDelegate: RCTAppDelegate {
     #endif
   }
 }
+

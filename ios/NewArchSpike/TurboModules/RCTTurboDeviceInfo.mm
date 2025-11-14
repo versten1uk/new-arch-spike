@@ -1,8 +1,15 @@
 //  RCTTurboDeviceInfo.mm
 //  NewArchSpike
+//
+//  TurboModule wrapper - delegates to Swift Core
 
 #import "RCTTurboDeviceInfo.h"
-#import <UIKit/UIKit.h>
+
+// Import these BEFORE Swift header so NewArchSpike-Swift.h can see them
+#import <React-RCTAppDelegate/RCTAppDelegate.h>
+#import <ExpoModulesCore-Swift.h>
+
+#import "NewArchSpike-Swift.h"
 
 @implementation RCTTurboDeviceInfo
 
@@ -11,19 +18,23 @@
 }
 
 - (NSString *)getDeviceModel {
-    return [[UIDevice currentDevice] model];
+    // Delegate to Swift Core
+    return [[TurboDeviceInfoCore shared] getDeviceModel];
 }
 
 - (NSString *)getDeviceName {
-    return [[UIDevice currentDevice] name];
+    // Delegate to Swift Core
+    return [[TurboDeviceInfoCore shared] getDeviceName];
 }
 
 - (NSString *)getSystemVersion {
-    return [[UIDevice currentDevice] systemVersion];
+    // Delegate to Swift Core
+    return [[TurboDeviceInfoCore shared] getSystemVersion];
 }
 
 - (NSString *)getBundleId {
-    return [[NSBundle mainBundle] bundleIdentifier] ?: @"";
+    // Delegate to Swift Core
+    return [[TurboDeviceInfoCore shared] getBundleId];
 }
 
 + (NSString *)moduleName {
