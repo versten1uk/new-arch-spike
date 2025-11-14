@@ -45,6 +45,8 @@ We will adopt a **Three-Layer Architecture Pattern** for all native modules:
 - **Types**:
   - **Expo Modules** (Swift/Kotlin DSL) - Recommended for analytics, storage, logging
   - **TurboModules** (Codegen + JSI) - For performance-critical modules or npm packages
+    - **iOS**: Objective-C++ wrapper (`RCT[ModuleName].mm`) that calls into Swift Core
+    - **Android**: Kotlin class that extends codegen-generated spec
 
 ### Layer 3: ModuleInterop (Stateless Facade)
 - **Purpose**: Single entry point for native-to-native calls

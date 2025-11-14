@@ -29,17 +29,16 @@ This POC demonstrates the **correct architecture** for cross-module communicatio
 - ✅ `FirebaseCore` (production) - Wraps Firebase SDK, owns analytics state
 
 **When NOT to use Core classes:**
-- ❌ **Stateless modules** (e.g., `TurboCalculator` - just math, no state)
+- ❌ **Stateless modules** with no cross-module dependencies
 - ❌ **Simple wrappers** with no business logic
 - ❌ **One-off utilities** that don't need cross-module access
 
-**Example of stateless module (NO Core needed):**
-```objc
-// TurboCalculator.mm - Simple stateless wrapper, NO Core needed
-- (NSNumber *)add:(double)a b:(double)b {
-    return @(a + b);  // No state, no complex logic
-}
-```
+**Note on TurboModules:**
+For iOS TurboModules, we use the **Swift Core + ObjC++ Wrapper** pattern to align with production architecture:
+- Swift Core (`TurboCalculatorCore.swift`) - Business logic with `@objc` exposure
+- ObjC++ Wrapper (`RCTTurboCalculator.mm`) - Thin JSI binding that delegates to Swift Core
+
+This pattern allows Swift business logic to be reused across native modules while the ObjC++ wrapper handles TurboModule JSI requirements.
 
 **Decision Tree: Do I need a Core class?**
 
@@ -260,8 +259,8 @@ This POC demonstrates both patterns (with and without Core):
 |--------|------|-----------|--------|
 | **ExpoLogger** | Expo | ✅ `ExpoLoggerCore` | Has **state** (`logCount`) + used by TurboCalculator via ModuleInterop |
 | **ExpoStorage** | Expo | ✅ `StorageCore` | Has **state** (`storage` map) |
-| **TurboCalculator** | Turbo | ❌ No Core | **Stateless** (just math), calls ModuleInterop for logging |
-| **TurboDeviceInfo** | Turbo | ❌ No Core | **Stateless** (uses native APIs directly), self-contained |
+| **TurboCalculator** | Turbo | ✅ `TurboCalculatorCore.swift` | **Swift + ObjC++ pattern** (production alignment) |
+| **TurboDeviceInfo** | Turbo | ✅ `TurboDeviceInfoCore.swift` | **Swift + ObjC++ pattern** (production alignment) |
 | **ModuleInterop** | Facade | N/A | **Stateless facade** - delegates to Core classes |
 
 **For Production:**
@@ -375,11 +374,25 @@ dependencies {
    ```
 
 4. **iOS implementation in `ios/TurboModules/`:**
+   
+   **Swift Core** (business logic):
+   ```swift
+   // TurboCalculatorCore.swift
+   @objc(TurboCalculatorCore)
+   class TurboCalculatorCore: NSObject {
+       @objc static let shared = TurboCalculatorCore()
+       @objc(addA:b:) func add(_ a: Double, b: Double) -> Double { a + b }
+   }
+   ```
+   
+   **ObjC++ Wrapper** (JSI binding):
    ```objc
-   // RCTTurboCalculator.mm
-   @interface RCTTurboCalculator : NSObject <NativeTurboCalculatorSpec>
-   - (NSNumber *)add:(double)a b:(double)b;
-   @end
+   // RCTTurboCalculator.mm - Delegates to Swift Core
+   #import "NewArchSpike-Swift.h"
+   
+   - (NSNumber *)add:(double)a b:(double)b {
+       return @([[TurboCalculatorCore shared] addA:a b:b]);
+   }
    ```
 
 5. **Register with `TurboReactPackage` in `MainApplication.kt`:**
