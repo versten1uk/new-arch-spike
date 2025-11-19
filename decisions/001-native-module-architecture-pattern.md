@@ -29,18 +29,73 @@ As we migrate our mobile application to React Native's New Architecture (0.77+) 
 
 ## Decision
 
-We will adopt a **Three-Layer Architecture Pattern** for all native modules:
+We will adopt a **flexible Three-Layer Architecture Pattern** where each layer is **optional** depending on the module's requirements:
 
-### Layer 1: Core Classes (Pure Native)
+### Decision Tree: What Does Your Module Need?
+
+```
+Does your module have persistent state (e.g., counters, caches)?
+├─ NO → Does another native module need to call it directly?
+│       ├─ NO → ✅ Simple Module (Wrapper only)
+│       └─ YES → ✅ Core + Wrapper (no ModuleInterop)
+└─ YES → ✅ Core + Wrapper (+ ModuleInterop if calling others)
+
+Does your module need to call OTHER native modules?
+└─ YES → ✅ Use ModuleInterop facade
+```
+
+### Module Complexity Examples
+
+**Simple Module (Wrapper Only):**
+- Pure utility functions (e.g., string formatting, simple calculations)
+- No persistent state, no cross-module calls
+- **Layers needed**: Wrapper only (Expo or Turbo)
+- **Example**: `StringUtils`, `MathHelpers`
+
+**Medium Module (Core + Wrapper):**
+- Has persistent state OR is called by other modules
+- No need to call other modules
+- **Layers needed**: Core + Wrapper
+- **Example**: `ExpoLogger` (has log count state)
+
+**Complex Module (Core + Wrapper + ModuleInterop):**
+- Has state AND calls other native modules
+- Needs native-to-native communication
+- **Layers needed**: Core + Wrapper + ModuleInterop
+- **Example**: `CGWebView` (tracks state, calls Firebase/AppsFlyer/Snowplow)
+
+### Layer 1: Core Classes (Pure Native) - **OPTIONAL**
+
 - **Purpose**: Contains ALL business logic and state
 - **Dependencies**: ZERO React Native dependencies
+  - ❌ **Don't import**: React Native framework code (e.g., `React`, `RCTBridge`, `react-native` packages)
+  - ✅ **OK to import**: Third-party SDKs (e.g., `FirebaseAnalytics`, `AppsFlyer`) even if they have RN dependencies internally
+  - **Why**: Enables unit testing without RN runtime, allows reuse in widgets/extensions, decouples business logic from RN lifecycle
 - **Naming**: `[ModuleName]Core` (e.g., `ExpoLoggerCore`, `AppsFlyerCore`)
 - **When to use**: ONLY if your module has **state** OR is called by other native modules
+- **When NOT to use**: Simple stateless utility modules
 - **Implementation**: Singleton pattern, pure Swift/Kotlin, no RN imports
 
-### Layer 2: Module Wrappers (Thin Adapters)
-- **Purpose**: Exposes Core classes to JavaScript
-- **Pattern**: Thin wrapper that delegates ALL calls to Core
+**Example:**
+```swift
+// AppsFlyerCore.swift - ✅ GOOD
+import AppsFlyerLib  // Third-party SDK - OK
+
+class AppsFlyerCore {
+    func trackEvent(_ name: String) {
+        AppsFlyer.shared().logEvent(name, withValues: [:])  // Uses SDK API
+    }
+}
+
+// ❌ BAD - Don't do this in Core:
+// import React
+// import RCTBridge
+```
+
+### Layer 2: Module Wrappers (Thin Adapters) - **ALWAYS REQUIRED**
+
+- **Purpose**: Exposes functionality to JavaScript
+- **Pattern**: Thin wrapper that delegates to Core (if it exists) or implements logic directly (if simple)
 - **Naming**: `[ModuleName]Module` (e.g., `ExpoLoggerModule`, `AppsFlyerModule`)
 - **Types**:
    - **Expo Modules** (Swift/Kotlin DSL) - Recommended for analytics, storage, logging
@@ -69,13 +124,33 @@ class TurboCalculatorCore: NSObject {
 
 This pattern aligns with production architecture (e.g., `CGSpotlight` module) and allows Swift business logic to be reused across native modules.
 
-### Layer 3: ModuleInterop (Stateless Facade)
+### Layer 3: ModuleInterop (Stateless Facade) - **OPTIONAL**
+
 - **Purpose**: Single entry point for native-to-native calls
 - **Location**: Lives inside the calling module (e.g., `cg-webview`)
+  - **Note**: In the POC, `ModuleInterop` is a separate module for demonstration purposes. In production, it should be part of the calling module to avoid extra dependencies.
 - **Pattern**: Stateless facade that delegates to Core classes
+- **When to use**: ONLY when your module needs to call other native modules
+- **When NOT to use**: Modules that only expose functionality to JavaScript
 - **NO STATE OWNERSHIP** - just a routing layer
+- **Scaling**: Split by domain to avoid god-objects (e.g., `AnalyticsInterop`, `StorageInterop`, `LoggingInterop`)
 
-**Communication Flow:**
+**Example structure inside `cg-webview`:**
+```
+cg-webview/
+├── ios/
+│   ├── CGWebViewModule.swift
+│   ├── AnalyticsInterop.swift    // → Firebase, AppsFlyer, Snowplow
+│   ├── StorageInterop.swift      // → Preferences, SecureStorage
+│   └── LoggingInterop.swift      // → Logger, Crashlytics
+└── android/
+    ├── CGWebViewModule.kt
+    ├── AnalyticsInterop.kt
+    ├── StorageInterop.kt
+    └── LoggingInterop.kt
+```
+
+### Communication Flow Example (Complex Module):
 ```
 TurboCalculator.add()
   ↓ (native call, no bridge)
@@ -85,6 +160,92 @@ ExpoLoggerCore.logInfo() ← State lives here
   ↑ (reads state)
 ExpoLoggerModule.getLogCount() ← JavaScript
 ```
+
+### Preventing Circular Dependencies
+
+The three-layer architecture **prevents most circular dependencies by design** through unidirectional flow:
+
+**Architecture rules that prevent cycles:**
+1. **Wrapper → Core** (one-way only, Core never imports Wrapper)
+2. **ModuleInterop → Core** (one-way only, Core never imports ModuleInterop)
+3. **Core classes are isolated** (no React Native imports, no other Core imports)
+4. **ModuleInterop is stateless** (just a router, owns no state)
+
+**Potential risk scenario (what NOT to do):**
+
+❌ **BAD - Could cause circular dependency:**
+```swift
+// FirebaseCore needs AppsFlyer data
+class FirebaseCore {
+    func track() {
+        let userId = AppsFlyerCore.shared.getUserId()  // ❌ Core → Core dependency
+    }
+}
+
+// AppsFlyerCore needs Firebase data
+class AppsFlyerCore {
+    func track() {
+        let sessionId = FirebaseCore.shared.getSessionId()  // ❌ Circular!
+    }
+}
+```
+
+**Mitigation strategies:**
+
+✅ **Strategy 1: Extract shared domain Core classes**
+```swift
+// UserSessionCore - single source of truth
+class UserSessionCore {
+    static let shared = UserSessionCore()
+    var userId: String?
+    var sessionId: String?
+}
+
+// Both analytics use it (no circular dependency)
+class FirebaseCore {
+    func track() {
+        let userId = UserSessionCore.shared.userId  // ✅ One-way dependency
+    }
+}
+
+class AppsFlyerCore {
+    func track() {
+        let sessionId = UserSessionCore.shared.sessionId  // ✅ One-way dependency
+    }
+}
+```
+
+✅ **Strategy 2: Dependency injection via initializer**
+```swift
+class FirebaseCore {
+    private let sessionProvider: () -> String?
+    
+    init(sessionProvider: @escaping () -> String? = { UserSessionCore.shared.sessionId }) {
+        self.sessionProvider = sessionProvider
+    }
+    
+    func track() {
+        let sessionId = sessionProvider()
+    }
+}
+```
+
+✅ **Strategy 3: Event bus pattern (for truly decoupled communication)**
+```swift
+// FirebaseCore posts events
+NotificationCenter.default.post(name: .userLoggedIn, object: userId)
+
+// AppsFlyerCore observes events
+NotificationCenter.default.addObserver(
+    forName: .userLoggedIn,
+    object: nil,
+    queue: nil
+) { notification in
+    // Handle user login
+}
+```
+
+**Key rule:** Core classes should **never import other Core classes**. If multiple Core classes need shared data, extract it to a separate shared Core class that both depend on.
 
 ## Options Considered
 
@@ -105,24 +266,26 @@ Convert all native modules to TurboModules with C++ JSI implementation.
 
 **Reason for not choosing:** Too complex for non-performance-critical modules. Most analytics, logging, and storage modules don't need direct JSI access and would suffer from increased maintenance burden.
 
-### Option B: Three-Layer Architecture (Core + Wrapper + Interop) - **SELECTED**
+### Option B: Flexible Three-Layer Architecture (Core + Wrapper + Interop) - **SELECTED**
 
-Separate concerns into Core classes (state/logic), thin wrappers (RN adapters), and ModuleInterop (stateless facade).
+Separate concerns into Core classes (state/logic), thin wrappers (RN adapters), and ModuleInterop (stateless facade). Each layer is **optional** based on module requirements.
 
 **Pros:**
 - Clear separation of concerns
-- Core classes are testable without RN runtime
+- **Flexible**: Simple modules only need a wrapper, complex modules use all layers
+- Core classes are testable without RN runtime (when needed)
 - Works on both old and new architecture
 - Compile-time safety with direct imports
-- Flexible: use TurboModules where needed, Expo Modules elsewhere
+- Can use TurboModules where needed, Expo Modules elsewhere
 - Same pattern on iOS and Android
 - Maintainable and scalable
 - Swift Core + ObjC++ pattern matches production architecture
+- **Not overkill**: Only add complexity when actually needed
 
 **Cons:**
 - Requires discipline to follow pattern consistently
-- More files per module (Core + Wrapper + Interop references)
-- Learning curve for team
+- More files for complex modules (Core + Wrapper + Interop references)
+- Learning curve for team to understand when to use each layer
 - iOS TurboModules require bridging header setup
 
 ### Option C: Expo Modules Only
@@ -193,11 +356,13 @@ Convert all modules to Expo Modules, including `cg-webview`.
    - iOS developers need to understand Swift/ObjC++ bridging for TurboModules
    - *Mitigation*: This ADR provides clear decision trees. POC project serves as reference implementation. Training sessions for team.
 
-2. **More Files Per Module**
-   - Stateful modules have 3-4 files (Core, Wrapper iOS, Wrapper Android, Interop references)
+2. **More Files for Complex Modules**
+   - Simple modules: 1-2 files (just Wrapper)
+   - Stateful modules: 3-4 files (Core + Wrapper iOS + Wrapper Android)
+   - Complex modules: 5+ files (Core + Wrapper + ModuleInterop references)
    - iOS TurboModules require both Swift Core and ObjC++ wrapper files
-   - More navigation between files during development
-   - *Mitigation*: Clear file naming conventions. Generator scripts could automate boilerplate creation in the future.
+   - More navigation between files during development for complex modules
+   - *Mitigation*: Only use multi-layer architecture when actually needed (see decision tree). Clear file naming conventions. Generator scripts could automate boilerplate creation in the future.
 
 3. **Configuration Overhead**
    - iOS Podspecs must declare dependencies explicitly
@@ -286,6 +451,8 @@ Convert all modules to Expo Modules, including `cg-webview`.
 ## Links
 
 **Proof of Concept Repository:** [NewArchSpike POC](https://github.com/versten1uk/new-arch-spike)
+
+**Note on POC Structure:** The POC implements `ModuleInterop` as a separate module for demonstration simplicity. In production, `ModuleInterop` should be implemented inside the calling module (e.g., `cg-webview`) as described in Layer 3.
 
 **Key Documentation:**
 - [Architecture Documentation (README.md)](https://github.com/versten1uk/new-arch-spike/README.md)
