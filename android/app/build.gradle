@@ -116,9 +116,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    // TurboModules need access to ModuleInterop
-    implementation project(':module-interop')
 }
 
 // Expo modules are autolinked via settings.gradle
