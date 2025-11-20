@@ -10,7 +10,6 @@
 #import <ExpoModulesCore-Swift.h>
 
 #import "NewArchSpike-Swift.h"
-#import <ModuleInterop/ModuleInterop.h>
 
 @implementation RCTTurboCalculator
 

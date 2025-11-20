@@ -1,7 +1,6 @@
 package com.newarchspike.turbomodules
 
 import com.facebook.react.bridge.ReactApplicationContext
-import com.moduleinterop.ModuleInterop
 import com.newarchspike.specs.NativeTurboCalculatorSpec
 
 /**

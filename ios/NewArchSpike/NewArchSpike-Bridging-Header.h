@@ -10,6 +10,3 @@
 #import <React/RCTUtils.h>
 #import <React/RCTConvert.h>
 #import <React/RCTBundleURLProvider.h>
-
-// ModuleInterop (so TurboModule Core classes can call it)
-#import "ModuleInterop.h"

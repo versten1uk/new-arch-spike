@@ -10,14 +10,4 @@ rootProject.name = 'NewArchSpike'
 
 include ':app'
 
-// Manually include modules that module-interop depends on
-include ':expo-logger'
-project(':expo-logger').projectDir = new File(rootProject.projectDir, '../node_modules/expo-logger/android')
-
-// NOTE: TurboModules are now implemented at app-level (following official docs)
-// No need to include them as separate library projects
-
-include ':module-interop'
-project(':module-interop').projectDir = new File(rootProject.projectDir, '../modules/module-interop/android')
-
 includeBuild('../node_modules/@react-native/gradle-plugin')
