@@ -18,22 +18,22 @@ public class ExpoStorageModule: Module {
         Name("ExpoStorage")
         
         AsyncFunction("setItem") { (key: String, value: String) in
-            StorageCore.shared().setItem(key, value: value)
+            StorageCore.shared.setItem(key, value: value)
         }
         
         AsyncFunction("getItem") { (key: String) -> String? in
             // Delegate to Core (which owns the state)
-            return StorageCore.shared().getItem(key)
+            return StorageCore.shared.getItem(key)
         }
         
         AsyncFunction("removeItem") { (key: String) in
             // Delegate to Core (which owns the state)
-            StorageCore.shared().removeItem(key)
+            StorageCore.shared.removeItem(key)
         }
         
         AsyncFunction("getAllKeys") { () -> [String] in
             // Delegate to Core (which owns the state)
-            return StorageCore.shared().getAllKeys() as? [String] ?? []
+            return StorageCore.shared.getAllKeys() as? [String] ?? []
         }
     }
 }

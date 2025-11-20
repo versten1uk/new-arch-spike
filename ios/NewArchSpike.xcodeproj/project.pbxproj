@@ -17,6 +17,7 @@
 		B7E625302EC4C50C004FD76C /* RCTTurboDeviceInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = B7E6252E2EC4C50C004FD76C /* RCTTurboDeviceInfo.mm */; };
 		B7E625312EC4C60C004FD76C /* TurboCalculatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E625332EC4C60C004FD76C /* TurboCalculatorCore.swift */; };
 		B7E625322EC4C60C004FD76C /* TurboDeviceInfoCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E625342EC4C60C004FD76C /* TurboDeviceInfoCore.swift */; };
+		F9BAE0882ECF94AB0068D98A /* ModuleInterop.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BAE0872ECF67D30068D98A /* ModuleInterop.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		B7E625332EC4C60C004FD76C /* TurboCalculatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurboCalculatorCore.swift; sourceTree = "<group>"; };
 		B7E625342EC4C60C004FD76C /* TurboDeviceInfoCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurboDeviceInfoCore.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F9BAE0872ECF67D30068D98A /* ModuleInterop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleInterop.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				B7E625342EC4C60C004FD76C /* TurboDeviceInfoCore.swift */,
 				B7E6252D2EC4C50C004FD76C /* RCTTurboDeviceInfo.h */,
 				B7E6252E2EC4C50C004FD76C /* RCTTurboDeviceInfo.mm */,
+				F9BAE0872ECF67D30068D98A /* ModuleInterop.swift */,
 			);
 			name = TurboModules;
 			path = NewArchSpike/TurboModules;
@@ -239,9 +242,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NewArchSpike/Pods-NewArchSpike-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NewArchSpike/Pods-NewArchSpike-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -314,9 +321,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NewArchSpike/Pods-NewArchSpike-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NewArchSpike/Pods-NewArchSpike-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -334,6 +345,7 @@
 				61581EA2EAEBCA56B69F88D5 /* ExpoModulesProvider.swift in Sources */,
 				B7E625312EC4C60C004FD76C /* TurboCalculatorCore.swift in Sources */,
 				B7E6252F2EC4C50C004FD76C /* RCTTurboCalculator.mm in Sources */,
+				F9BAE0882ECF94AB0068D98A /* ModuleInterop.swift in Sources */,
 				B7E625322EC4C60C004FD76C /* TurboDeviceInfoCore.swift in Sources */,
 				B7E625302EC4C50C004FD76C /* RCTTurboDeviceInfo.mm in Sources */,
 			);
@@ -469,10 +481,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -541,10 +550,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

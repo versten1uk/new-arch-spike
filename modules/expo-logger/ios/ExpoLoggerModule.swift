@@ -18,27 +18,27 @@ public class ExpoLoggerModule: Module {
         
         AsyncFunction("logInfo") { (message: String) in
             // Delegate to Core (which owns the logic and state)
-            ExpoLoggerCore.shared().logInfo(message)
+            ExpoLoggerCore.shared.logInfo(message)
         }
         
         AsyncFunction("logWarning") { (message: String) in
             // Delegate to Core (which owns the logic and state)
-            ExpoLoggerCore.shared().logWarning(message)
+            ExpoLoggerCore.shared.logWarning(message)
         }
         
         AsyncFunction("logError") { (message: String) in
             // Delegate to Core (which owns the logic and state)
-            ExpoLoggerCore.shared().logError(message)
+            ExpoLoggerCore.shared.logError(message)
         }
         
         AsyncFunction("getLogCount") { () -> Int in
-            let count = ExpoLoggerCore.shared().getLogCount()
+            let count = ExpoLoggerCore.shared.getLogCount()
             return Int(count)
         }
         
         AsyncFunction("resetLogCount") { () in
             // Reset count (useful for development/testing)
-            ExpoLoggerCore.shared().resetCount()
+            ExpoLoggerCore.shared.resetCount()
         }
     }
 }
