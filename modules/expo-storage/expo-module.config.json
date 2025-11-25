@@ -1,7 +1,9 @@
 {
   "platforms": ["ios", "android"],
-  "ios": {
-    "modules": ["ExpoStorageModule"]
+  "apple": {
+    "ios": {
+      "modules": ["ExpoStorageModule"]
+    }
   },
   "android": {
     "modules": ["expo.modules.storage.ExpoStorageModule"]
